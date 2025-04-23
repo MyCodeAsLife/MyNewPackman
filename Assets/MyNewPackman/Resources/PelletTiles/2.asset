@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Pellet_1_Medium
+  m_Name: 2
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 6938248684355038417, guid: 43cdbdfca625c3840a4f8435cf01ab6f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 1825468144520819130, guid: ecfdb568b4121614b9bba6b5d053802d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Transform:
     e00: 1
     e01: 0

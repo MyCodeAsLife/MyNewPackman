@@ -7,15 +7,15 @@ namespace Assets.MyPackman.Presenter
     public class PlayerMovementHandler : IPlayerMovementHandler
     {
         private Rigidbody2D _rigidbody;
-        private IMapHandler _mapHandler;                                    // DI - ?
+        //private IMapHandler _mapHandler;                                    // DI - ?
         private Func<Vector2> _getDirection;
 
         private event Action Moved;                                  // Вынести в шину событий?
 
-        public PlayerMovementHandler(Rigidbody2D rigidbody, IMapHandler handler, MonoBehaviour parent)
+        public PlayerMovementHandler(Rigidbody2D rigidbody/*, IMapHandler handler, MonoBehaviour parent*/)
         {
             _rigidbody = rigidbody;
-            _mapHandler = handler;
+            //_mapHandler = handler;
         }
 
         public void Tick()
@@ -50,31 +50,6 @@ namespace Assets.MyPackman.Presenter
         public void Initialyze(Func<Vector2> getDirection)
         {
             _getDirection = getDirection;
-        }
-
-        public void HandleCollision(Vector3 position)
-        {
-            var pos = position;
-
-            var newX = Mathf.Abs((int)pos.x - pos.x);
-            var newY = Mathf.Abs((int)pos.y - pos.y);
-
-            int X = (int)pos.x;
-            int Y = Mathf.Abs((int)pos.y - 1);
-
-            if (newX < 0.4f)
-                X -= 1;
-            else if (newX > 0.6f)
-                X += 1;
-
-            if (newY < 0.4f)
-                Y -= 1;
-            else if (newY > 0.6f)
-                Y += 1;
-
-            var newPosition = new Vector3Int(X, Y);
-            Debug.Log(newPosition);
-            _mapHandler.ChangeTile(newPosition, ConstantsGame.EmptyTile);
         }
     }
 }

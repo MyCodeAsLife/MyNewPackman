@@ -18,16 +18,24 @@ namespace Assets.MyPackman.Model
 
         public IMapHandler MapHandler => _mapHandler;
 
-        private void OnEnable()
+        public void Initialize(Tilemap wallsTilemap, Tilemap pelletsTilemap, Tile[] wallTiles, Tile[] pelletTiles)
+        {
+            _wallsTileMap = wallsTilemap;
+            _pelletsTileMap = pelletsTilemap;
+            _walls = wallTiles;
+            _pellets = pelletTiles;
+        }
+
+        public void Run()
         {
             _map = new MapModel();
             _mapHandler = new MapHandler(_wallsTileMap, _walls, _map);                // Создание классов вынести в DI?
             new LevelConstructor(_wallsTileMap, _pelletsTileMap, _walls, _pellets, _map);              // Создание классов вынести в DI?
 
-            float y = _map.Map.GetLength(0) * ConstantsGame.GridCellSize * 0.5f;            // Magic
+            float y = _map.Map.GetLength(0) * ConstantsGame.GridCellSize * 0.5f - 1;            // Magic
             float x = _map.Map.GetLength(1) * ConstantsGame.GridCellSize * 0.5f;            // Magic
             Camera.main.transform.position = new Vector3(x, -y, -10);            // Magic
-            //Camera.main.orthographicSize = y + GameSettings.GridCellSize;      // Размер проекции камеры должен быть кратем размерам спрайтов дабы избежать искажений последних
+            Camera.main.orthographicSize = y + ConstantsGame.GridCellSize;      // Размер проекции камеры должен быть кратем размерам спрайтов дабы избежать искажений последних
         }
     }
 }

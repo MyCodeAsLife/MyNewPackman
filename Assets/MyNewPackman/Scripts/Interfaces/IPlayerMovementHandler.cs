@@ -10,6 +10,5 @@ namespace Assets.MyPackman.Presenter
         public void StartMoving();
         public void StopMoving();
         public void Initialyze(Func<Vector2> getDirection);
-        public void HandleCollision(Vector3 position);
     }
 }

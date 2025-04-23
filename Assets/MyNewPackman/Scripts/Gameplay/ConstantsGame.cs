@@ -1,4 +1,6 @@
-﻿namespace Assets.MyPackman.Settings
+﻿using UnityEngine;
+
+namespace Assets.MyPackman.Settings
 {
     public static class ConstantsGame
     {
