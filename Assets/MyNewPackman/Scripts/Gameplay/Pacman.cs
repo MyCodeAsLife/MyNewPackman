@@ -1,4 +1,3 @@
-using Assets.MyPackman.Model;
 using Assets.MyPackman.Presenter;
 using Assets.MyPackman.Settings;
 using UnityEngine;
@@ -6,37 +5,40 @@ using UnityEngine.InputSystem;
 
 public class Pacman : MonoBehaviour
 {
-    private int _pelletLayer; 
+    private int _pelletLayer;
 
     private PlayerInputActions _inputActions;                       // Все сопутствующее вынести в класс PlayerInputController
-    private IPlayerMovementHandler _playerMoveHandler;                                                          // DI - ? через interface
+    private IPlayerMovementHandler _playerMoveHandler;              // DI - ? через interface
     private IMapHandler _mapHandler;
 
     private void Awake()
     {
-        _pelletLayer = LayerMask.NameToLayer("Pellet");
+        _pelletLayer = LayerMask.NameToLayer(GameConstants.Pellet);
     }
 
     private void OnEnable()
     {
-        _mapHandler = FindFirstObjectByType<LevelPresenter>().MapHandler;
-        _playerMoveHandler = new PlayerMovementHandler(transform.GetComponent<Rigidbody2D>()/*, _mapHandler, this*/);        // Создание классов вынести в DI?
+        //_mapHandler = FindFirstObjectByType<LevelPresenter>().MapHandler;   // Вынести в метод Initialize
+
+        _playerMoveHandler = new PlayerMovementHandler(transform.GetComponent<Rigidbody2D>());        // Создание классов вынести в DI?
         _playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>());
-        _inputActions = new PlayerInputActions();                                                                                   // Создание классов вынести в DI?
-        _inputActions.Enable();
-        _inputActions.Keyboard.Movement.started += OnMoveStarted;
-        _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;
+
+        _inputActions = new PlayerInputActions();                       // Все сопутствующее вынести в класс PlayerInputController
+        _inputActions.Enable();                                         // Все сопутствующее вынести в класс PlayerInputController
+        _inputActions.Keyboard.Movement.started += OnMoveStarted;       // Подписыватся через DI?
+        _inputActions.Keyboard.Movement.canceled += OnMoveCanceled;     // Подписыватся через DI?
     }
 
     private void OnDisable()
     {
-        _inputActions.Disable();
-        _inputActions.Keyboard.Movement.performed -= OnMoveStarted;
+        _inputActions.Disable();                                    // Все сопутствующее вынести в класс PlayerInputController
+        _inputActions.Keyboard.Movement.performed -= OnMoveStarted; // Отписыватся через DI?
     }
 
     private void Update()
     {
-        _playerMoveHandler.Tick();
+        // Если сделать общий Update через R3, то данный вызов упраздница, и проще будет реализовать паузу
+        _playerMoveHandler.Tick();  // Для создания "Паузы"
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -45,6 +47,11 @@ public class Pacman : MonoBehaviour
         Debug.Log(collision.gameObject.layer);                                                     //++++++++++++++++++++++
 
         HandleCollision(transform.position);
+    }
+
+    public void Initialize(IMapHandler mapHandler)
+    {
+        _mapHandler = mapHandler;
     }
 
     private void HandleCollision(Vector3 position)
@@ -69,7 +76,7 @@ public class Pacman : MonoBehaviour
 
         var newPosition = new Vector3Int(X, Y);
         Debug.Log(newPosition);                                                     //++++++++++++++++++++++
-        _mapHandler.ChangeTile(newPosition, ConstantsGame.EmptyTile);
+        _mapHandler.ChangeTile(newPosition, GameConstants.EmptyTile);
     }
 
     private void OnMoveStarted(InputAction.CallbackContext context)

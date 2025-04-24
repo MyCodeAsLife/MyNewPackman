@@ -5,7 +5,7 @@ namespace Assets.MyPackman.Presenter
 {
     public interface IPlayerMovementHandler
     {
-        public void Tick();
+        public void Tick();             // Сделать общий Update через R3?
         public void Move();
         public void StartMoving();
         public void StopMoving();

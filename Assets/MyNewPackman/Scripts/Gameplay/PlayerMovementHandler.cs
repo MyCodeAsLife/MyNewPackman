@@ -7,15 +7,13 @@ namespace Assets.MyPackman.Presenter
     public class PlayerMovementHandler : IPlayerMovementHandler
     {
         private Rigidbody2D _rigidbody;
-        //private IMapHandler _mapHandler;                                    // DI - ?
         private Func<Vector2> _getDirection;
 
         private event Action Moved;                                  // Вынести в шину событий?
 
-        public PlayerMovementHandler(Rigidbody2D rigidbody/*, IMapHandler handler, MonoBehaviour parent*/)
+        public PlayerMovementHandler(Rigidbody2D rigidbody)
         {
             _rigidbody = rigidbody;
-            //_mapHandler = handler;
         }
 
         public void Tick()
@@ -31,8 +29,8 @@ namespace Assets.MyPackman.Presenter
             currentDirection.y = Mathf.Round(currentDirection.y);
 
 
-            float posX = _rigidbody.position.x + (ConstantsGame.PlayerSpeed * Time.fixedDeltaTime * currentDirection.x);
-            float posY = _rigidbody.position.y + (ConstantsGame.PlayerSpeed * Time.fixedDeltaTime * currentDirection.y);
+            float posX = _rigidbody.position.x + (GameConstants.PlayerSpeed * Time.fixedDeltaTime * currentDirection.x);
+            float posY = _rigidbody.position.y + (GameConstants.PlayerSpeed * Time.fixedDeltaTime * currentDirection.y);
             var newPosition = new Vector3(posX, posY, 0);
             _rigidbody.MovePosition(newPosition);
         }
