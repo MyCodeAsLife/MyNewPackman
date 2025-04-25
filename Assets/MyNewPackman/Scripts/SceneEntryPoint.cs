@@ -65,23 +65,20 @@ public class SceneEntryPoint : MonoBehaviour
 
     private void InitializeCamera()
     {
-        var map = _sceneContainer.Resolve<ILevelData>().Map;
-        float y = map.GetLength(0) * GameConstants.GridCellSize * /*GameConstants.Half*/0.5f;
-        float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;
+        const float OffsetFromScreenAspectRatio = 16f / 9f;
 
-        float panelHeight = map.GetLength(0) * 0.1f;   // 10%
+        var map = _sceneContainer.Resolve<ILevelData>().Map;
+        float y = map.GetLength(0) * GameConstants.GridCellSize * GameConstants.Half;
+        float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;
 
         Camera.main.transform.position
             = new Vector3(x, -y + GameConstants.GameplayInformationalPamelHeight, Camera.main.transform.position.z);
         float size = y;
 
-        if (x > y)          // ÐÀÁÎÒÀÅÒ!!!!!!!!!!!!!!!
-            size = x / (16f / 9f) - GameConstants.GameplayInformationalPamelHeight;
+        if (x > y)
+            size = x / OffsetFromScreenAspectRatio - GameConstants.GameplayInformationalPamelHeight;
 
-        //Camera.main.orthographicSize = size + GameConstants.GridCellSize;
-
-        Camera.main.orthographicSize = size + GameConstants.GameplayInformationalPamelHeight;
-
-        Debug.Log($"x = {map.GetLength(0)}, y = {map.GetLength(1)}, pahelHeight = {panelHeight}"); //+++++++++++++++++++++
+        Camera.main.orthographicSize
+            = size + (GameConstants.GameplayInformationalPamelHeight * OffsetFromScreenAspectRatio);
     }
 }

@@ -12,7 +12,7 @@
         // Resources path
         public const string NoFrictionFullPath = "NoFriction";
         public const string WallTilesFolderPath = "WallTiles/";
-        public const string PelletTilesFolderPath = "PelletTiles/";
+        public const string PelletRuleTilesFolderPath = "PelletRuleTiles/";
 
         // Number of tiles along the specified path
         public const int WallTilesCount = 38;
@@ -21,6 +21,11 @@
         // Map settings
         public const float GridCellSize = 1f;
         public const int GridCellPixelSize = 24;
+
+        //Pellets name
+        public const string PelletSmall = "PelletSmall(Clone)";
+        public const string PelletMedium = "PelletMedium(Clone)";
+        public const string PelletLarge = "PelletLarge(Clone)";
 
         // Packman settings
         //public const int NoDirection = -1;
@@ -31,13 +36,14 @@
         public const float PlayerSpeed = 4f;
 
         //Level Constructor - переделать в enum?
-        public const int EmptyTile = -4;
-        public const int Player = -1;
+        public const int EmptyTile = 0;
+        public const int PelletTile = -4;
+        public const int PacmanSpawn = -1;
 
         // Errors
         public const string PositionOnMapNotFound = "Position on map, not Found.";
 
         // UI and Camera
-        public const float GameplayInformationalPamelHeight = 2f;
+        public const float GameplayInformationalPamelHeight = 3f;
     }
 }
