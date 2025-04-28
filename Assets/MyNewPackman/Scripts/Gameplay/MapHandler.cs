@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using Assets.MyPackman.Settings;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Assets.MyPackman.Presenter
 {
     public class MapHandler : IMapHandler       // Разделить на ModelMapHandler и PresenterMapHandler и связать через шину событий
     {
-        private ILevelData _currentLevel;       // DI - ? через interface
+        private ILevelConfig _currentLevel;       // DI - ? через interface
         private Tilemap _wallsTileMap;          // DI - ?
         private Tilemap _pelletsTilemap;        // DI - ?
         private Tile[] _walls;                  // DI - ?
 
-        public MapHandler(Tilemap wallsTileMap, Tilemap pelletsTilemap, Tile[] walls, ILevelData level)
+        public MapHandler(Tilemap wallsTileMap, Tilemap pelletsTilemap, Tile[] walls, ILevelConfig level)
         {
             _wallsTileMap = wallsTileMap;
             _pelletsTilemap = pelletsTilemap;
@@ -18,13 +19,10 @@ namespace Assets.MyPackman.Presenter
             _currentLevel = level;
         }
 
-        //public int GetTile(Vector3Int position) => _currentLevel.Map[position.y, position.x];
-
         // Передовать класс(по типу патерна комманда) в котором будет указан нужный tilemap, нужный массив тайлов и номер тайла
         public void ChangeTile(Vector3 position, int objectNumber)                       // Остановился здесь+++++++++++++++++++++++
         {
-            Debug.Log(objectNumber);                                                                //++++++++++++++++++++++++++
-            var handlePosition = HandleCoordinates(position);
+            var handlePosition = ConvertToCellPosition(position);
 
             _currentLevel.Map[handlePosition.y, handlePosition.x] = objectNumber;                       // Изменяет Модель
 
@@ -38,7 +36,7 @@ namespace Assets.MyPackman.Presenter
             }
         }
 
-        private Vector3Int HandleCoordinates(Vector3 position)
+        private Vector3Int ConvertToCellPosition(Vector3 position)
         {
             var pos = position;
 
@@ -61,23 +59,48 @@ namespace Assets.MyPackman.Presenter
             return new Vector3Int(X, Y);
         }
 
-        //public bool TryFindPositionByObjectNumber(int number, ref Vector3Int position)
-        //{
-        //    Vector3Int tileNumber = Vector3Int.zero;
+        public bool IsIntersaction(int x, int y)       // Вынести в mapHandler
+        {
+            int numberOfPaths = 0;
+            int vertical = 0;
+            int horizontal = 0;
+            int maxLengthY = _currentLevel.Map.GetLength(0);
+            int maxLengthX = _currentLevel.Map.GetLength(1);
 
-        //    for (int y = 0; y < _currentLevel.Map.GetLength(0); y++)
-        //    {
-        //        for (int x = 0; x < _currentLevel.Map.GetLength(1); x++)
-        //        {
-        //            if (_currentLevel.Map[y, x] == number)
-        //            {
-        //                position = new Vector3Int(x, y);
-        //                return true;
-        //            }
-        //        }
-        //    }
+            int upX = x - 1;
+            int downX = x + 1;
+            int leftY = y - 1;
+            int rightY = y + 1;
 
-        //    return false;
-        //}
+            if (upX >= 0 && (_currentLevel.Map[y, upX] == GameConstants.PelletTile ||
+                             _currentLevel.Map[y, upX] == GameConstants.EmptyTile))
+            {
+                numberOfPaths++;
+                vertical++;
+            }
+
+            if (downX < maxLengthX && (_currentLevel.Map[y, downX] == GameConstants.PelletTile ||
+                                       _currentLevel.Map[y, downX] == GameConstants.EmptyTile))
+            {
+                numberOfPaths++;
+                vertical--;
+            }
+
+            if (leftY >= 0 && (_currentLevel.Map[leftY, x] == GameConstants.PelletTile ||
+                               _currentLevel.Map[leftY, x] == GameConstants.EmptyTile))
+            {
+                numberOfPaths++;
+                horizontal++;
+            }
+
+            if (rightY < maxLengthY && (_currentLevel.Map[rightY, x] == GameConstants.PelletTile ||
+                                        _currentLevel.Map[rightY, x] == GameConstants.EmptyTile))
+            {
+                numberOfPaths++;
+                horizontal--;
+            }
+
+            return numberOfPaths > 2 || horizontal != 0 || vertical != 0 ? true : false;                                    //Magic
+        }
     }
 }

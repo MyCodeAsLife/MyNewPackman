@@ -3,7 +3,7 @@ using Assets.MyPackman.Settings;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Pacman : MonoBehaviour
+public class Pacman : MonoBehaviour     // Разделить логику
 {
     private int _pelletLayer;
 
@@ -18,8 +18,6 @@ public class Pacman : MonoBehaviour
 
     private void OnEnable()
     {
-        //_mapHandler = FindFirstObjectByType<LevelPresenter>().MapHandler;   // Вынести в метод Initialize
-
         _playerMoveHandler = new PlayerMovementHandler(transform.GetComponent<Rigidbody2D>());        // Создание классов вынести в DI?
         _playerMoveHandler.Initialyze(() => _inputActions.Keyboard.Movement.ReadValue<Vector2>());
 
@@ -48,20 +46,21 @@ public class Pacman : MonoBehaviour
 
         switch (collision.gameObject.name)
         {
-            case GameConstants.PelletSmall:
-                Debug.Log(GameConstants.PelletSmall);
+            case GameConstants.TriggerPelletSmall:
+                Debug.Log(GameConstants.TriggerPelletSmall);
                 break;
 
-            case GameConstants.PelletMedium:
-                Debug.Log(GameConstants.PelletMedium);
+            case GameConstants.TriggerPelletMedium:
+                Debug.Log(GameConstants.TriggerPelletMedium);
                 break;
 
-            case GameConstants.PelletLarge:
-                Debug.Log(GameConstants.PelletLarge);
+            case GameConstants.TriggerPelletLarge:
+                Debug.Log(GameConstants.TriggerPelletLarge);
                 break;
         }
 
         HandleCollision(transform.position);
+        //collision.gameObject.SetActive(false);
     }
 
     public void Initialize(IMapHandler mapHandler)
@@ -71,32 +70,8 @@ public class Pacman : MonoBehaviour
 
     private void HandleCollision(Vector3 position)
     {
-        //Vector3Int newPosition = HandleCoordinates(position);
         _mapHandler.ChangeTile(position, GameConstants.EmptyTile);
     }
-
-    //private Vector3Int HandleCoordinates(Vector3 position)
-    //{
-    //    var pos = position;
-
-    //    var newX = Mathf.Abs((int)pos.x - pos.x);
-    //    var newY = Mathf.Abs((int)pos.y - pos.y);
-
-    //    int X = (int)pos.x;
-    //    int Y = Mathf.Abs((int)pos.y - 1);
-
-    //    if (newX < 0.4f)
-    //        X -= 1;
-    //    else if (newX > 0.6f)
-    //        X += 1;
-
-    //    if (newY < 0.4f)
-    //        Y -= 1;
-    //    else if (newY > 0.6f)
-    //        Y += 1;
-
-    //    return new Vector3Int(X, Y);
-    //}
 
     private void OnMoveStarted(InputAction.CallbackContext context)
     {

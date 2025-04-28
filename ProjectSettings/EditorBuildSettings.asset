@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/MyNewPackman/Scenes/Boot.unity
+    guid: e8702f791230f14488c5e2ee7139e8c3
+  - enabled: 1
     path: Assets/MyNewPackman/Scenes/MainMenu.unity
     guid: 9d01bb8b2569b474ba98ee86207fdf63
   - enabled: 1

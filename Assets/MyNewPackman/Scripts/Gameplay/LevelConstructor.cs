@@ -8,47 +8,59 @@ public class LevelConstructor
     private readonly DIContainer _sceneContainer;
     private readonly Tilemap _wallsTileMap;                 // Получать через DI ?
     private readonly Tilemap _pelletsTileMap;               // Получать через DI ?
+    private readonly Tilemap _nodesTileMap;                 // Получать через DI ?
     private readonly Tile[] _walls;                         // Получать через DI ?
-    private readonly ILevelData _level;                     // Получать через DI ?
-    private readonly RuleTile[] _rulePellets;
+    private readonly ILevelConfig _level;                     // Получать через DI ?
+    private readonly RuleTile[] _pelletsRule;
+    private readonly RuleTile[] _nodeRule;
+    private readonly IMapHandler _mapHandler;
 
     public LevelConstructor(DIContainer sceneContainer)
     {
         _sceneContainer = sceneContainer;
         _wallsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Obstacle);
         _pelletsTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Pellet);
-        _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.WallTilesCount);
-        _rulePellets = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.PelletTilesCount);
-        _level = sceneContainer.Resolve<ILevelData>();                                                      // Получать от MainMenu? при загрузке сцены
-        _sceneContainer.RegisterInstance(new MapHandler(_wallsTileMap, _pelletsTileMap, _walls, _level));   // Создание классов вынести в DI?
+        _nodesTileMap = sceneContainer.Resolve<Tilemap>(GameConstants.Node);
+
+        _walls = LoadTiles(GameConstants.WallTilesFolderPath, GameConstants.NumberOfWallTiles);
+        _pelletsRule = LoadRuleTiles(GameConstants.PelletRuleTilesFolderPath, GameConstants.NumberOfPelletTiles);
+        _nodeRule = LoadRuleTiles(GameConstants.NodeRuleTileFolderPath, GameConstants.NumberOfNodeTiles);
+        _level = sceneContainer.Resolve<ILevelConfig>();                                                      // Получать от MainMenu? при загрузке сцены
+        _sceneContainer.RegisterInstance<IMapHandler>(new MapHandler(_wallsTileMap, _pelletsTileMap, _walls, _level));   // Создание классов вынести в DI?
+        _mapHandler = sceneContainer.Resolve<IMapHandler>();
     }
 
     public void ConstructLevel()        // Передовать команды в MapHendler, чтобы только он менял Tilemap?
     {
         _wallsTileMap.ClearAllTiles();
 
-        for (int y = 0; y < _level.Map.GetLength(0); y++)                                               // Magic
+        for (int y = 0; y < _level.Map.GetLength(0); y++)
         {
-            for (int x = 0; x < _level.Map.GetLength(1); x++)                                           // Magic
+            for (int x = 0; x < _level.Map.GetLength(1); x++)
             {
-                if (_level.Map[y, x] > -1)                                                              // Magic
-                    _wallsTileMap.SetTile(new Vector3Int(x, -y), _walls[_level.Map[y, x]]);
-                else if (_level.Map[y, x] == -1)                                                        // Magic
+                var cellPosition = new Vector3Int(x, -y);
+
+                if (_level.Map[y, x] > 0)                                                              // Magic
+                    _wallsTileMap.SetTile(cellPosition, _walls[_level.Map[y, x]]);
+                else if (_level.Map[y, x] == GameConstants.EmptyTile)
+                    _wallsTileMap.SetTile(cellPosition, null);
+                else if (_level.Map[y, x] == -1)                                                       // Magic
                     SpawnPacman(x, y);
-                else if (_level.Map[y, x] == -4)                                                        // Magic
+                else if (_level.Map[y, x] == -4)                                                       // Magic
                 {
-                    if (IsIntersaction(x, y))
+                    if (_mapHandler.IsIntersaction(x, y))
                     {
+                        _nodesTileMap.SetTile(cellPosition, _nodeRule[0]);                     // Magic
                         int chance = Random.Range(0, 100);
 
                         if (chance < 10)                                                                // Magic
-                            _pelletsTileMap.SetTile(new Vector3Int(x, -y), _rulePellets[2]);            // Magic
+                            _pelletsTileMap.SetTile(cellPosition, _pelletsRule[2]);            // Magic
                         else
-                            _pelletsTileMap.SetTile(new Vector3Int(x, -y), _rulePellets[1]);            // Magic
+                            _pelletsTileMap.SetTile(cellPosition, _pelletsRule[1]);            // Magic
                     }
                     else
                     {
-                        _pelletsTileMap.SetTile(new Vector3Int(x, -y), _rulePellets[0]);                // Magic
+                        _pelletsTileMap.SetTile(cellPosition, _pelletsRule[0]);                // Magic
                     }
                 }
             }
@@ -85,34 +97,8 @@ public class LevelConstructor
         player.transform.position = newPosition;
         player.transform.rotation = Quaternion.identity;
         player.gameObject.SetActive(true);
-        player.Initialize(_sceneContainer.Resolve<MapHandler>());
+        player.Initialize(_mapHandler);
 
-        _sceneContainer.Resolve<MapHandler>().ChangeTile(new Vector3(x, y), GameConstants.EmptyTile);
-    }
-
-    private bool IsIntersaction(int x, int y)
-    {
-        int numberOfPaths = 0;
-        int maxLengthY = _level.Map.GetLength(0);
-        int maxLengthX = _level.Map.GetLength(1);
-
-        int upX = x - 1;
-        int downX = x + 1;
-        int leftY = y - 1;
-        int rightY = y + 1;
-
-        if (upX >= 0 && (_level.Map[y, upX] == GameConstants.PelletTile || _level.Map[y, upX] == GameConstants.EmptyTile))
-            numberOfPaths++;
-
-        if (downX < maxLengthX && (_level.Map[y, downX] == GameConstants.PelletTile || _level.Map[y, downX] == GameConstants.EmptyTile))
-            numberOfPaths++;
-
-        if (leftY >= 0 && (_level.Map[leftY, x] == GameConstants.PelletTile || _level.Map[leftY, x] == GameConstants.EmptyTile))
-            numberOfPaths++;
-
-        if (rightY < maxLengthY && (_level.Map[rightY, x] == GameConstants.PelletTile || _level.Map[rightY, x] == GameConstants.EmptyTile))
-            numberOfPaths++;
-
-        return numberOfPaths > 2 ? true : false;                                    //Magic
+        _mapHandler.ChangeTile(new Vector3(x, y), GameConstants.EmptyTile);
     }
 }

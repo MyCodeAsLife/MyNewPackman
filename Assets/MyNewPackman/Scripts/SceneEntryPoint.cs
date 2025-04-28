@@ -15,14 +15,19 @@ public class SceneEntryPoint : MonoBehaviour
     private void Initialize(DIContainer parentContainer = null)
     {
         _sceneContainer = new DIContainer(parentContainer);
-        _sceneContainer.RegisterInstance<ILevelData>(new NormalLevelData());           // MapModel - Получать как часть настроек из MainMenu
 
-        // Зарегестрировать игрового персонажа
+        // + Зарегестрировать игрового персонажа
         // Зарегестрировать контроллер (обработчик нажатия клавиш)
         // Зарегестрировать противников
+        // + Зарегестрировать уровень
         // Что еще зарегестрировать?
-        _sceneContainer.RegisterSingleton(_ => new PacmanFactory());
-        _sceneContainer.RegisterSingleton<Pacman>(c => c.Resolve<PacmanFactory>().CreatePacman(Vector3.zero));
+        _sceneContainer.RegisterSingleton(_ => new CharacterFactory());
+        _sceneContainer.RegisterSingleton<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
+        _sceneContainer.RegisterTransient<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));     // Можно разбить на синглтоны ghost 1, 2, 3 и т.д.
+        
+        _sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());           // Переделать под LevelData
+
+        new LevelData(new NormalLevelConfig());
 
         InitializeCamera();
         CreateScene();
@@ -35,6 +40,7 @@ public class SceneEntryPoint : MonoBehaviour
 
         CreateWallFrame(sceneFrame.transform);
         CreatePelletFrame(sceneFrame.transform);
+        CreateNodeFrame(sceneFrame.transform);
 
         var levelConstarctor = new LevelConstructor(_sceneContainer);
         levelConstarctor.ConstructLevel();
@@ -63,11 +69,21 @@ public class SceneEntryPoint : MonoBehaviour
         pellets.AddComponent<TilemapRenderer>();
     }
 
+    private void CreateNodeFrame(Transform parent)
+    {
+        var nodes = new GameObject(GameConstants.Node);
+        nodes.transform.parent = parent;
+        nodes.layer = LayerMask.NameToLayer(GameConstants.Node);
+        var nodesTilemap = nodes.AddComponent<Tilemap>();
+        _sceneContainer.RegisterInstance(GameConstants.Node, nodesTilemap);
+        nodes.AddComponent<TilemapCollider2D>();
+    }
+
     private void InitializeCamera()
     {
         const float OffsetFromScreenAspectRatio = 16f / 9f;
 
-        var map = _sceneContainer.Resolve<ILevelData>().Map;
+        var map = _sceneContainer.Resolve<ILevelConfig>().Map;
         float y = map.GetLength(0) * GameConstants.GridCellSize * GameConstants.Half;
         float x = map.GetLength(1) * GameConstants.GridCellSize * GameConstants.Half;
 
