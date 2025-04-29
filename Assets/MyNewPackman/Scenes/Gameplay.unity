@@ -265,7 +265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1779345721}
-  - component: {fileID: 1779345722}
+  - component: {fileID: 1779345723}
   m_Layer: 0
   m_Name: EntryPoint
   m_TagString: Untagged
@@ -288,7 +288,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1779345722
+--- !u!114 &1779345723
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -297,9 +297,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1779345719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73be5a30797bf9540ab83375442edad8, type: 3}
+  m_Script: {fileID: 11500000, guid: 54f97e98a6bc2334f844198d7159bac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sceneBinder: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
