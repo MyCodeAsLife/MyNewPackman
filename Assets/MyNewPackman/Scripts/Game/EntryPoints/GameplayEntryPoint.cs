@@ -1,16 +1,15 @@
-﻿using System;
+﻿using R3;
 using UnityEngine;
 
 public class GameplayEntryPoint : MonoBehaviour
 {
-    private UIGameplayRootBinder _uiGameplayRootBinder;
+    private UIGameplayRootBinder _uiScene;
     private DIContainer _sceneContainer;
 
-    public event Action GoToMainMenuSceneRequested;
-
-    public void Run(DIContainer projectContainer = null)
+    public Observable<SceneExitParams> Run(SceneEnterParams sceneEnterParams, DIContainer sceneContainer)
     {
-        _sceneContainer = new DIContainer(projectContainer);
+        _sceneContainer = sceneContainer;
+        GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
         CreateUISceneBinder();
 
@@ -18,19 +17,44 @@ public class GameplayEntryPoint : MonoBehaviour
         //var dummy = gameObject.AddComponent<SceneEntryPoint>();
         //dummy.Run(_sceneContainer);
 
-        // Черновой код, подписка на запрос перехода в MainMenu
-        _uiGameplayRootBinder.GoToMainMenuButtonClicked += () =>
-        {
-            GoToMainMenuSceneRequested?.Invoke();
-        };
+        Debug.Log($"Run Gameplay scene. Save file: {gameplayEnterParams?.SaveFileName}");           //++++++++++++++++++++++
+
+        var exitParams = CreateExitParams();
+        var exitSceneSignalSubj = CreateExitSignal();
+        var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitSceneSignalSubj, exitParams);
+        return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
+    }
+
+    private Subject<Unit> CreateExitSignal()
+    {
+        // Создание сигнала и привязка его к UI сцены (на кнопку выхода в MainMenu)
+        var exitSceneSignalSubj = new Subject<Unit>();
+        _uiScene.Bind(exitSceneSignalSubj);
+        return exitSceneSignalSubj;
+    }
+
+    private Observable<SceneExitParams> ConfigurateExitSignal(Subject<Unit> exitSceneSignalSubj,
+                                                                 SceneExitParams exitParams)
+    {
+        // Преобразовываем сигнал выхода со сцены, чтобы он возвращал значение GameplayExitParams
+        var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
+        return exitToMainMenuSceneSignal;
+    }
+
+    private SceneExitParams CreateExitParams()
+    {
+        // Создаем\конфигурируем параметры выхода с текущей сцены
+        var mainMenuEnterParams = new MainMenuEnterParams("Some params");
+        var exitParams = new SceneExitParams(mainMenuEnterParams);
+        return exitParams;
     }
 
     // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
     private void CreateUISceneBinder()        // Создаем UIGameplayRootBinder
     {
         var uiScenePrefab = Resources.Load<UIGameplayRootBinder>(GameConstants.UIGameplayFullPath);
-        _uiGameplayRootBinder = Instantiate(uiScenePrefab);
+        _uiScene = Instantiate(uiScenePrefab);
         var uiRoot = _sceneContainer.Resolve<UIRootView>();
-        uiRoot.AttachSceneUI(_uiGameplayRootBinder.gameObject);
+        uiRoot.AttachSceneUI(_uiScene.gameObject);
     }
 }

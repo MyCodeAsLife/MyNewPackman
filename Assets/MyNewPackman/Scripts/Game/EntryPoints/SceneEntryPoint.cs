@@ -15,9 +15,9 @@ public class SceneEntryPoint : MonoBehaviour
         // Зарегестрировать противников
         // + Зарегестрировать уровень
         // Что еще зарегестрировать?
-        _sceneContainer.RegisterSingleton(_ => new CharacterFactory());
-        _sceneContainer.RegisterSingleton<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
-        _sceneContainer.RegisterTransient<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));     // Можно разбить на синглтоны ghost 1, 2, 3 и т.д.
+        _sceneContainer.RegisterFactory(_ => new CharacterFactory());
+        _sceneContainer.RegisterFactory<Pacman>(c => c.Resolve<CharacterFactory>().CreatePacman(Vector3.zero));
+        _sceneContainer.RegisterFactory<Ghost>(c => c.Resolve<CharacterFactory>().CreateGhost(Vector3.zero));     // Можно разбить на синглтоны ghost 1, 2, 3 и т.д.
 
         _sceneContainer.RegisterInstance<ILevelConfig>(new NormalLevelConfig());           // Переделать под LevelData
 

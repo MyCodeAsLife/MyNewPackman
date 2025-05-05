@@ -1,3 +1,4 @@
+using R3;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,8 +7,10 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
 {
     private static AppEntryPoint _instance;
 
-    private UIRootView _uiRootView;
-    private DIContainer _projectContainer = new();  // Если этот класс выгрузится, то это поле бессмысленно
+    private readonly DIContainer _projectContainer = new();  // Если этот класс выгрузится, то это поле бессмысленно
+
+    private UIRootView _uiRoot;
+    private DIContainer _cashedSceneContainer;  // Для проведения финальных мероприятий над объектами контейнера перед уничтожением сцены
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void AutoStartApplication()
@@ -20,8 +23,8 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
     private AppEntryPoint()
     {
         var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath);
-        _uiRootView = Object.Instantiate(loadingScreenPrefab);
-        _projectContainer.RegisterInstance(_uiRootView);
+        _uiRoot = Object.Instantiate(loadingScreenPrefab);
+        _projectContainer.RegisterInstance(_uiRoot);
     }
 
     // Запрос на загрузку первой сцены, при запуске приложения
@@ -32,7 +35,8 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
 
         if (sceneName == GameConstants.Gameplay)
         {
-            Coroutines.StartRoutine(LoadAndStartGameplay());
+            var defaultScene = new GameplayEnterParams("ddd.sv", 1);
+            Coroutines.StartRoutine(LoadAndStartGameplay(defaultScene));
             return;
         }
 
@@ -52,47 +56,48 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
     }
 
     // Загрузка сцены MainMenu
-    private IEnumerator LoadAndStartMainMenu()
+    private IEnumerator LoadAndStartMainMenu(MainMenuEnterParams mainMenuEnterParams = null)
     {
         // Блокировать управление пока не закончится загрузка
-        _uiRootView.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
+        _uiRoot.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
+        _cashedSceneContainer.Dispose();        // Очистка контейнера сцены.
+
         yield return LoadScene(GameConstants.Boot);         // Сперва загружаем сцену "заглушку" чтобы выгрузить предыдущую сцену
         yield return LoadScene(GameConstants.MainMenu);     // Затем загружаем целевую сцену
 
-        yield return new WaitForSeconds(2f);                // Имитация продолжительной загрузки
+        yield return new WaitForSeconds(1f);                // Имитация продолжительной загрузки
 
+        var mainMenuContainer = _cashedSceneContainer = new DIContainer(_projectContainer);    // Создание чистого контейнера для сцены
         var sceneEntryPoint = Object.FindFirstObjectByType<MainMenuEntryPoint>();   // Ищем точку входа на сцене
-        sceneEntryPoint.Run(_projectContainer);                                     // Передаем туда настройки и контейнер
-
-        // Черновой код. Подписка на запрос перехода в MainMenu.        НУЖНО Отписатся???
-        sceneEntryPoint.GoToGameplaySceneRequested += () =>
+        sceneEntryPoint.Run(mainMenuEnterParams, mainMenuContainer).Subscribe(mainMenuExitParams =>
         {
-            Coroutines.StartRoutine(LoadAndStartGameplay());
-        };
+            Coroutines.StartRoutine(LoadAndStartGameplay(mainMenuExitParams.TargetSceneEnterParams));
+        });                // Передаем туда настройки и контейнер
 
-        _uiRootView.HideLoadingScreen();            // Отключение экрана(скриншот) загрузки
+        _uiRoot.HideLoadingScreen();            // Отключение экрана(скриншот) загрузки
     }
 
     // Загрузка сцены Gameplay
-    private IEnumerator LoadAndStartGameplay()
+    private IEnumerator LoadAndStartGameplay(SceneEnterParams sceneEnterParams)
     {
         // Блокировать управление пока не закончится загрузка
-        _uiRootView.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
+        _uiRoot.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
+        _cashedSceneContainer.Dispose();        // Очистка контейнера сцены.
+
         yield return LoadScene(GameConstants.Boot);         // Сперва загружаем сцену "заглушку" чтобы выгрузить предыдущую сцену
         yield return LoadScene(GameConstants.Gameplay);     // Затем загружаем целевую сцену
 
-        yield return new WaitForSeconds(2f);                // Имитация продолжительной загрузки
+        yield return new WaitForSeconds(1f);                // Имитация продолжительной загрузки
 
+        var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer); // Создание чистого контейнера для сцены
         var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();   // Ищем точку входа на сцене
-        sceneEntryPoint.Run(_projectContainer);                                     // Передаем туда настройки и контейнер
-
-        // Черновой код. Подписка на запрос перехода в MainMenu.        НУЖНО Отписатся???
-        sceneEntryPoint.GoToMainMenuSceneRequested += () =>
+        sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
         {
-            Coroutines.StartRoutine(LoadAndStartMainMenu());
-        };
+            // Делаем чтото данными возвращенными из сцены gameplayExitParams
+            Coroutines.StartRoutine(LoadAndStartMainMenu(gameplayExitParams.MainMenuEnterParams));
+        });                                     // Передаем туда настройки и контейнер
 
-        _uiRootView.HideLoadingScreen();            // Отключение экрана(скриншот) загрузки
+        _uiRoot.HideLoadingScreen();            // Отключение экрана(скриншот) загрузки
     }
 
     private IEnumerator LoadScene(string sceneName)
