@@ -11,6 +11,15 @@ public class GameplayEntryPoint : MonoBehaviour
         _sceneContainer = sceneContainer;
         GameplayEnterParams gameplayEnterParams = sceneEnterParams.As<GameplayEnterParams>();
 
+        // Регистрация всего необходимого для данной сцены
+        GameplayRegistrations.Register(_sceneContainer, gameplayEnterParams);   // Регистрируем все сервисы необходимые для сцены
+        var gameplayViewModelContainer = new DIContainer(_sceneContainer);      // Создаем отдельный контейнер для ViewModel's
+        GameplayViewModelRegistartions.Register(gameplayViewModelContainer);    // Регистрируем все ViewModel's необходимые для сцены
+
+        // For test
+        _sceneContainer.Resolve<SomeGameplayService>();
+        gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
+
         CreateUISceneBinder();
 
         //// Заглушка
@@ -23,6 +32,15 @@ public class GameplayEntryPoint : MonoBehaviour
         var exitSceneSignalSubj = CreateExitSignal();
         var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitSceneSignalSubj, exitParams);
         return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
+    }
+
+    // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
+    private void CreateUISceneBinder()        // Создаем UIGameplayRootBinder
+    {
+        var uiScenePrefab = Resources.Load<UIGameplayRootBinder>(GameConstants.UIGameplayFullPath);
+        _uiScene = Instantiate(uiScenePrefab);
+        var uiRoot = _sceneContainer.Resolve<UIRootView>();
+        uiRoot.AttachSceneUI(_uiScene.gameObject);
     }
 
     private Subject<Unit> CreateExitSignal()
@@ -47,14 +65,5 @@ public class GameplayEntryPoint : MonoBehaviour
         var mainMenuEnterParams = new MainMenuEnterParams("Some params");
         var exitParams = new SceneExitParams(mainMenuEnterParams);
         return exitParams;
-    }
-
-    // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
-    private void CreateUISceneBinder()        // Создаем UIGameplayRootBinder
-    {
-        var uiScenePrefab = Resources.Load<UIGameplayRootBinder>(GameConstants.UIGameplayFullPath);
-        _uiScene = Instantiate(uiScenePrefab);
-        var uiRoot = _sceneContainer.Resolve<UIRootView>();
-        uiRoot.AttachSceneUI(_uiScene.gameObject);
     }
 }

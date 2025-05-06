@@ -10,6 +10,15 @@ public class MainMenuEntryPoint : MonoBehaviour
     {
         _sceneContainer = sceneContainer;
 
+        // Регистрация всего необходимого для данной сцены
+        MainMenuRegistrations.Register(_sceneContainer, mainMenuEnterParams);   // Регистрируем все сервисы необходимые для сцены
+        var mainMenuViewModelContainer = new DIContainer(_sceneContainer);      // Создаем отдельный контейнер для ViewModel's
+        MainMenuViewModelRegistartions.Register(mainMenuViewModelContainer);    // Регистрируем все ViewModel's необходимые для сцены
+
+        // For test
+        _sceneContainer.Resolve<SomeMainMenuService>();
+        mainMenuViewModelContainer.Resolve<UIMainMenuRootViewModel>();
+
         CreateUISceneBinder();
 
         //// Заглушка
@@ -22,6 +31,14 @@ public class MainMenuEntryPoint : MonoBehaviour
         var exitSceneSignalSubj = CreateExitSignal();
         var exitToGameplaySceneSignal = ConfigurateExitSignal(exitSceneSignalSubj, exitParams);
         return exitToGameplaySceneSignal; // Возвращаем преобразованный сигнал
+    }
+
+    private MainMenuExitParams CreateExitParams()
+    {
+        // Создаем\конфигурируем параметры выхода с текущей сцены
+        var gameplayEnterParams = new GameplayEnterParams("large.save", 228);     // Magic
+        var exitParams = new MainMenuExitParams(gameplayEnterParams);
+        return exitParams;
     }
 
     private Subject<Unit> CreateExitSignal()
@@ -38,14 +55,6 @@ public class MainMenuEntryPoint : MonoBehaviour
         // Преобразовываем сигнал выхода со сцены, чтобы он возвращал значение GameplayExitParams
         var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
         return exitToMainMenuSceneSignal;
-    }
-
-    private MainMenuExitParams CreateExitParams()
-    {
-        // Создаем\конфигурируем параметры выхода с текущей сцены
-        var gameplayEnterParams = new GameplayEnterParams("large.save", 228);     // Magic
-        var exitParams = new MainMenuExitParams(gameplayEnterParams);
-        return exitParams;
     }
 
     // Можно выделить в шаблон (в GameplayEntryPoint похожая функция)

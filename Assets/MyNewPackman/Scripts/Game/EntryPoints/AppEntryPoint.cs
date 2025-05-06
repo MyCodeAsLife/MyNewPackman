@@ -3,11 +3,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class AppEntryPoint                  // Этот класс выгрузится после создания\загрузки сцены?
+public class AppEntryPoint
 {
     private static AppEntryPoint _instance;
 
-    private readonly DIContainer _projectContainer = new();  // Если этот класс выгрузится, то это поле бессмысленно
+    private readonly DIContainer _projectContainer = new();
 
     private UIRootView _uiRoot;
     private DIContainer _cashedSceneContainer;  // Для проведения финальных мероприятий над объектами контейнера перед уничтожением сцены
@@ -22,9 +22,13 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
     // Загрузка настроек приложения(в том числе сохраненных)
     private AppEntryPoint()
     {
+        // Создание и регистрация корневого UI
         var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath);
         _uiRoot = Object.Instantiate(loadingScreenPrefab);
         _projectContainer.RegisterInstance(_uiRoot);
+
+        // Регистрация сервисов уровня проекта
+        _projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
     }
 
     // Запрос на загрузку первой сцены, при запуске приложения
@@ -60,7 +64,7 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
     {
         // Блокировать управление пока не закончится загрузка
         _uiRoot.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
-        _cashedSceneContainer.Dispose();        // Очистка контейнера сцены.
+        _cashedSceneContainer?.Dispose();        // Очистка контейнера сцены.
 
         yield return LoadScene(GameConstants.Boot);         // Сперва загружаем сцену "заглушку" чтобы выгрузить предыдущую сцену
         yield return LoadScene(GameConstants.MainMenu);     // Затем загружаем целевую сцену
@@ -82,7 +86,7 @@ public class AppEntryPoint                  // Этот класс выгрузится после созда
     {
         // Блокировать управление пока не закончится загрузка
         _uiRoot.ShowLoadingScreen();            // Включение экрана(скриншот) загрузки
-        _cashedSceneContainer.Dispose();        // Очистка контейнера сцены.
+        _cashedSceneContainer?.Dispose();        // Очистка контейнера сцены.
 
         yield return LoadScene(GameConstants.Boot);         // Сперва загружаем сцену "заглушку" чтобы выгрузить предыдущую сцену
         yield return LoadScene(GameConstants.Gameplay);     // Затем загружаем целевую сцену
