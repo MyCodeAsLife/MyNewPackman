@@ -27,8 +27,12 @@ public class AppEntryPoint
         _uiRoot = Object.Instantiate(loadingScreenPrefab);
         _projectContainer.RegisterInstance(_uiRoot);
 
+        // Создание сервиса\провайдера уровня проекта
+        var gameStateProvider = new PlayerPrefsGameStateProvider();
+
         // Регистрация сервисов уровня проекта
         _projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
+        _projectContainer.RegisterInstance<IGameStateProvader>(gameStateProvider);
     }
 
     // Запрос на загрузку первой сцены, при запуске приложения
@@ -92,6 +96,10 @@ public class AppEntryPoint
         yield return LoadScene(GameConstants.Gameplay);     // Затем загружаем целевую сцену
 
         yield return new WaitForSeconds(1f);                // Имитация продолжительной загрузки
+
+        bool isGameStateLoaded = false;
+        _projectContainer.Resolve<IGameStateProvader>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
+        yield return new WaitUntil(() => isGameStateLoaded);
 
         var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer); // Создание чистого контейнера для сцены
         var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();   // Ищем точку входа на сцене
