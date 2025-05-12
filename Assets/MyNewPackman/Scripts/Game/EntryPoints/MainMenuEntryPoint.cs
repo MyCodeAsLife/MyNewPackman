@@ -25,7 +25,7 @@ public class MainMenuEntryPoint : MonoBehaviour
         //var dummy = gameObject.AddComponent<SceneEntryPoint>();
         //dummy.Run(_sceneContainer);
 
-        Debug.Log($"Run MainMenu scene. Result: {mainMenuEnterParams?.EnterParams}");           //++++++++++++++++++++++
+        //Debug.Log($"Run MainMenu scene. Result: {mainMenuEnterParams?.EnterParams}");           //++++++++++++++++++++++
 
         var exitParams = CreateExitParams();
         var exitSceneSignalSubj = CreateExitSignal();

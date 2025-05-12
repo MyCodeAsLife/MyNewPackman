@@ -10,11 +10,11 @@ public class SomeMainMenuService : IDisposable
     {
         _someCommonService = someCommonService;
 
-        Debug.Log(GetType().Name + " has been created");            //+++++++++++++++++++++++++++++++
+        //Debug.Log(GetType().Name + " has been created");            //+++++++++++++++++++++++++++++++
     }
 
     public void Dispose()
     {
-        Debug.Log("MainMenu - Очистить все подписки");                         //+++++++++++++++++++++++++++++++
+        //Debug.Log("MainMenu - Очистить все подписки");                         //+++++++++++++++++++++++++++++++
     }
 }

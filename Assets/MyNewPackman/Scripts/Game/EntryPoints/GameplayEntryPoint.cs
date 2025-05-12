@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using ObservableCollections;
+using R3;
 using UnityEngine;
 
 public class GameplayEntryPoint : MonoBehaviour
@@ -17,6 +18,7 @@ public class GameplayEntryPoint : MonoBehaviour
         GameplayViewModelRegistartions.Register(gameplayViewModelContainer);    // Регистрируем все ViewModel's необходимые для сцены
 
         // For test
+        TestCommandProcessor();
         gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
         gameplayViewModelContainer.Resolve<WorldGameplayRootViewModel>();
 
@@ -26,12 +28,33 @@ public class GameplayEntryPoint : MonoBehaviour
         //var dummy = gameObject.AddComponent<SceneEntryPoint>();
         //dummy.Run(_sceneContainer);
 
-        Debug.Log($"Run Gameplay scene. Save file: {gameplayEnterParams?.SaveFileName}");           //++++++++++++++++++++++
+        //Debug.Log($"Run Gameplay scene. Save file: {gameplayEnterParams?.SaveFileName}");           //++++++++++++++++++++++
 
         var exitParams = CreateExitParams();
         var exitSceneSignalSubj = CreateExitSignal();
         var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitSceneSignalSubj, exitParams);
         return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
+    }
+
+    private void TestCommandProcessor()
+    {
+        var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
+        gameStateProvider.GameState.Buildings.ObserveAdd().Subscribe(e =>
+        {
+            var building = e.Value;
+            Debug.Log("Building placed. Type id: " +
+                building.TypeId +
+                ", ID: " + building.Id +
+                ", Position: " +
+                building.Position.Value
+                );
+        });     //+++++++++++++++++++++
+        // Создание процессора команд
+        var cmd = new CommandProcessor(gameStateProvider);
+        // Создание и регистрация обработчика команд по размещению строений
+        cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameStateProvider.GameState));
+        // Передача на выплнение команды по размещению строения
+        var result = cmd.Process(new CmdPlaceBuilding("Home_1", new Vector3Int(1, 0, 1)));
     }
 
     // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)

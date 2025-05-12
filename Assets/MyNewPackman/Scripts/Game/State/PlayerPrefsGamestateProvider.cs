@@ -42,7 +42,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         if (!PlayerPrefs.HasKey(SETTINGS_STATE_KEY))
         {
             SettingsState = CreateGameSettingsStateFromSettings();  // Создаем дефолтное состояние
-            Debug.Log("GameSettingsState created from settings: " + JsonUtility.ToJson(_settingsStateOrigin, true));    //++++++++++++++++++++++++++++++++
+            //Debug.Log("GameSettingsState created from settings: " + JsonUtility.ToJson(_settingsStateOrigin, true));    //++++++++++++++++++++++++++++++++
 
             SaveSettingsState();    // Сохраняем дефолтное состояние
         }
@@ -53,7 +53,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
             _settingsStateOrigin = JsonUtility.FromJson<GameSettingsState>(json);
             SettingsState = new GameSettingsStateProxy(_settingsStateOrigin);
 
-            Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
+            //Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
         }
 
         return Observable.Return(SettingsState);
