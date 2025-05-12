@@ -22,17 +22,19 @@ public class AppEntryPoint
     // Загрузка настроек приложения(в том числе сохраненных)
     private AppEntryPoint()
     {
-        // Создание и регистрация корневого UI
-        var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath);
-        _uiRoot = Object.Instantiate(loadingScreenPrefab);
-        _projectContainer.RegisterInstance(_uiRoot);
-
         // Создание сервиса\провайдера уровня проекта
         var gameStateProvider = new PlayerPrefsGameStateProvider();
 
         // Регистрация сервисов уровня проекта
         _projectContainer.RegisterFactory(_ => new SomeCommonService()).AsSingle();
-        _projectContainer.RegisterInstance<IGameStateProvader>(gameStateProvider);
+        _projectContainer.RegisterInstance<IGameStateProvider>(gameStateProvider);
+
+        _projectContainer.Resolve<IGameStateProvider>().LoadSettingsState();  // Загрузка настроек приложения
+
+        // Создание и регистрация корневого UI
+        var loadingScreenPrefab = Resources.Load<UIRootView>(GameConstants.UIRootViewFullPath);
+        _uiRoot = Object.Instantiate(loadingScreenPrefab);
+        _projectContainer.RegisterInstance(_uiRoot);
     }
 
     // Запрос на загрузку первой сцены, при запуске приложения
@@ -97,15 +99,16 @@ public class AppEntryPoint
 
         yield return new WaitForSeconds(1f);                // Имитация продолжительной загрузки
 
+        // Загрузка данных/настроек/сохранений уровня
         bool isGameStateLoaded = false;
-        _projectContainer.Resolve<IGameStateProvader>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
+        _projectContainer.Resolve<IGameStateProvider>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
         yield return new WaitUntil(() => isGameStateLoaded);
 
         var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer); // Создание чистого контейнера для сцены
         var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();   // Ищем точку входа на сцене
         sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
         {
-            // Делаем чтото данными возвращенными из сцены gameplayExitParams
+            // Делаем чтото с данными возвращенными из сцены gameplayExitParams
             Coroutines.StartRoutine(LoadAndStartMainMenu(gameplayExitParams.MainMenuEnterParams));
         });                                     // Передаем туда настройки и контейнер
 

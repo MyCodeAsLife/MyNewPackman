@@ -17,8 +17,8 @@ public class GameplayEntryPoint : MonoBehaviour
         GameplayViewModelRegistartions.Register(gameplayViewModelContainer);    // Регистрируем все ViewModel's необходимые для сцены
 
         // For test
-        var someService = _sceneContainer.Resolve<SomeGameplayService>();
         gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
+        gameplayViewModelContainer.Resolve<WorldGameplayRootViewModel>();
 
         CreateUISceneBinder();
 

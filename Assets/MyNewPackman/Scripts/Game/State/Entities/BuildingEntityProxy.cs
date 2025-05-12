@@ -6,6 +6,7 @@ public class BuildingEntityProxy
 {
     public BuildingEntityProxy(BuildingEntity buildingEntity)
     {
+        BuildingEntity = buildingEntity;
         Id = buildingEntity.Id;
         TypeId = buildingEntity.TypeId;
         Level = new ReactiveProperty<int>(buildingEntity.Level);
@@ -15,6 +16,7 @@ public class BuildingEntityProxy
         Position.Skip(1).Subscribe(value => buildingEntity.Position = value);   // Подписка на изменение оригинала, при изменении Proxy
     }
 
+    public BuildingEntity BuildingEntity { get; }
     public int Id { get; }              // Нельзя изменить
     public string TypeId { get; }       // Нельзя изменить
     public ReactiveProperty<int> Level { get; }             // Можно изменить через Level.Value

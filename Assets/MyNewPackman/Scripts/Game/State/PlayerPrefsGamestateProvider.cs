@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPrefsGameStateProvider : IGameStateProvader
+// Разделить провайдер сохранения\загрузки геймплея\игры и настроект приложения
+public class PlayerPrefsGameStateProvider : IGameStateProvider
 {
-    private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);
+    private const string GAME_STATE_KEY = nameof(GAME_STATE_KEY);           // Вынести в контсанты
+    private const string SETTINGS_STATE_KEY = nameof(SETTINGS_STATE_KEY);   // Вынести в контсанты
 
     public GameStateProxy GameState { get; private set; }
+    public GameSettingsStateProxy SettingsState { get; private set; }
 
     private GameState _gameStateOrigin { get; set; }
+    private GameSettingsState _settingsStateOrigin { get; set; }
 
-    public Observable<GameStateProxy> LoadGameState()
+
+    public Observable<GameStateProxy> LoadGameState()   // Похожа на LoadSettingsState
     {
         if (!PlayerPrefs.HasKey(GAME_STATE_KEY))
         {
@@ -32,7 +37,29 @@ public class PlayerPrefsGameStateProvider : IGameStateProvader
         return Observable.Return(GameState);
     }
 
-    public Observable<bool> SaveGameState()
+    public Observable<GameSettingsStateProxy> LoadSettingsState()   // Похожа на LoadGameState
+    {
+        if (!PlayerPrefs.HasKey(SETTINGS_STATE_KEY))
+        {
+            SettingsState = CreateGameSettingsStateFromSettings();  // Создаем дефолтное состояние
+            Debug.Log("GameSettingsState created from settings: " + JsonUtility.ToJson(_settingsStateOrigin, true));    //++++++++++++++++++++++++++++++++
+
+            SaveSettingsState();    // Сохраняем дефолтное состояние
+        }
+        else
+        {
+            // Загружаем
+            var json = PlayerPrefs.GetString(SETTINGS_STATE_KEY);
+            _settingsStateOrigin = JsonUtility.FromJson<GameSettingsState>(json);
+            SettingsState = new GameSettingsStateProxy(_settingsStateOrigin);
+
+            Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
+        }
+
+        return Observable.Return(SettingsState);
+    }
+
+    public Observable<bool> SaveGameState() // Похожа на SaveSettingsState
     {
         var json = JsonUtility.ToJson(_gameStateOrigin, true);
         PlayerPrefs.SetString(GAME_STATE_KEY, json);
@@ -40,7 +67,15 @@ public class PlayerPrefsGameStateProvider : IGameStateProvader
         return Observable.Return(true);
     }
 
-    public Observable<bool> ResetGameState()
+    public Observable<bool> SaveSettingsState() // Похожа на SaveGameState
+    {
+        var json = JsonUtility.ToJson(_settingsStateOrigin, true);
+        PlayerPrefs.SetString(SETTINGS_STATE_KEY, json);
+
+        return Observable.Return(true);
+    }
+
+    public Observable<bool> ResetGameState()    // Похожа на ResetSettingsState
     {
         GameState = CreateGameStateFromSettings();
         SaveGameState();
@@ -48,7 +83,15 @@ public class PlayerPrefsGameStateProvider : IGameStateProvader
         return Observable.Return(true);
     }
 
-    private GameStateProxy CreateGameStateFromSettings()
+    public Observable<bool> ResetSettingsState()    // Похожа на ResetGameState
+    {
+        SettingsState = CreateGameSettingsStateFromSettings();
+        SaveSettingsState();
+
+        return Observable.Return(true);
+    }
+
+    private GameStateProxy CreateGameStateFromSettings()    // Похожа на CreateGameSettingsStateFromSettings
     {
         // Делаем фейк
         _gameStateOrigin = new GameState
@@ -61,5 +104,17 @@ public class PlayerPrefsGameStateProvider : IGameStateProvader
         };
 
         return new GameStateProxy(_gameStateOrigin);
+    }
+
+    private GameSettingsStateProxy CreateGameSettingsStateFromSettings()    // Похожа на CreateGameStateFromSettings
+    {
+        // Делаем фейк
+        _settingsStateOrigin = new GameSettingsState
+        {
+            MusicVolume = 22,
+            SFXVolume = 33,
+        };
+
+        return new GameSettingsStateProxy(_settingsStateOrigin);
     }
 }
