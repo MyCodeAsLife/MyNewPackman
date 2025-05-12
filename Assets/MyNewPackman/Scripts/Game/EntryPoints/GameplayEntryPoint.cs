@@ -49,12 +49,9 @@ public class GameplayEntryPoint : MonoBehaviour
                 building.Position.Value
                 );
         });     //+++++++++++++++++++++
-        // Создание процессора команд
-        var cmd = new CommandProcessor(gameStateProvider);
-        // Создание и регистрация обработчика команд по размещению строений
-        cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameStateProvider.GameState));
-        // Передача на выплнение команды по размещению строения
-        var result = cmd.Process(new CmdPlaceBuilding("Home_1", new Vector3Int(1, 0, 1)));
+
+        var buildingsService = _sceneContainer.Resolve<BuildingsService>();
+        buildingsService.PlaceBuilding("TestBuilding_1", new Vector3Int(1, 0, 1));
     }
 
     // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
