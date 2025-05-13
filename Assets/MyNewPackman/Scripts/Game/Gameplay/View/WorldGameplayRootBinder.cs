@@ -1,0 +1,62 @@
+﻿using ObservableCollections;
+using R3;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Класс в котором создаются View и объеденяются с ViewModel
+// Хранит в себе список префабов
+public class WorldGameplayRootBinder : MonoBehaviour
+{
+    private readonly Dictionary<int, BuildingBinder> _viewBuildingsMap = new();
+
+    // Это на случай когда во время выгрузки сцены, данный объект удалится раньше ViewModel-ей
+    // И они при своем удалении будут пытатся обрашатся к данному объекту на удаление View
+    private readonly CompositeDisposable _disposables = new();
+
+    [SerializeField] private BuildingBinder _prefabBuilding;
+
+    private void OnDestroy()
+    {
+        _disposables.Dispose();
+    }
+
+    public void Bind(WorldGameplayRootViewModel rootViewModel)
+    {
+        _prefabBuilding = Resources.Load<BuildingBinder>("Prefabs/ForTests/BuildingDummy");
+
+        foreach (var viewModel in rootViewModel.AllBuildings)
+        {
+            CreateBuilding(viewModel);
+        }
+
+        // Подписываем создание View, на появление новых ViewModel
+        _disposables.Add(rootViewModel.AllBuildings.ObserveAdd().Subscribe(e =>
+        {
+            CreateBuilding(e.Value);
+        }));
+        // Подписываем удаление View, на удаление ViewModel
+        _disposables.Add(rootViewModel.AllBuildings.ObserveRemove().Subscribe(e =>
+        {
+            DestroyBuilding(e.Value);
+        }));
+    }
+
+    private void CreateBuilding(BuildingViewModel buildingViewModel)
+    {
+        var createdBuilding = Instantiate(_prefabBuilding);     // Создаем View объекта
+        createdBuilding.Bind(buildingViewModel);                // Объеденяем его с ViewModel
+
+        // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять
+        // Или переложить ответственность на их удаление на сам объект (тоесть подписать функцию удаление на евент удаления)
+        _viewBuildingsMap[buildingViewModel.BuildingEntityId] = createdBuilding;
+    }
+
+    private void DestroyBuilding(BuildingViewModel buildingViewModel)
+    {
+        if (_viewBuildingsMap.TryGetValue(buildingViewModel.BuildingEntityId, out var createdBuilding))
+        {
+            Destroy(createdBuilding.gameObject);
+            _viewBuildingsMap.Remove(buildingViewModel.BuildingEntityId);
+        }
+    }
+}

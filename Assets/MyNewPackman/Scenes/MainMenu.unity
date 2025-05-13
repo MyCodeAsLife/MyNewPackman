@@ -285,7 +285,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ede91d44b88506448a4f1f67bfcb366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiGameplayRootBinder: {fileID: 0}
 --- !u!4 &1723491590
 Transform:
   m_ObjectHideFlags: 0
