@@ -22,7 +22,11 @@ public class AppEntryPoint
     // «агрузка настроек приложени€(в том числе сохраненных)
     private AppEntryPoint()
     {
-        // —оздание сервиса\провайдера уровн€ проекта
+        // —оздание сервиса\провайдера загрузки базовых настроек всего
+        var settingsProvider = new SettingsProvider();
+        // –егистраци€ сервиса\провайдера загрузки базовых настроек всего
+        _projectContainer.RegisterInstance<ISettingsProvider>(settingsProvider);
+        // —оздание сервиса\провайдера сохранени€\загрузки уровн€ проекта\сцены
         var gameStateProvider = new PlayerPrefsGameStateProvider();
 
         // –егистраци€ сервисов уровн€ проекта
@@ -38,8 +42,10 @@ public class AppEntryPoint
     }
 
     // «апрос на загрузку первой сцены, при запуске приложени€
-    private void RunApplication()
+    private async void RunApplication()
     {
+        await _projectContainer.Resolve<ISettingsProvider>().LoadGameSettingsAsync();   // Ќужно ставить в блок загрузки уровн€?
+
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
 

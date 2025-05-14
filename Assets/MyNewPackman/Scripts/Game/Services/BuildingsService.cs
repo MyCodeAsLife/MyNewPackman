@@ -8,14 +8,24 @@ using UnityEngine;
 public class BuildingsService   // Посылает команды в обработчик команд
 {
     private readonly ICommandProcessor _cmd;
-    private readonly ObservableList<BuildingViewModel> _allBuildings = new(); // Для выдачи наружу реактивного списка
-    private readonly Dictionary<int, BuildingViewModel> _buildingMap = new(); // Кэшируем созданные ViewModel
+    private readonly ObservableList<BuildingViewModel> _allBuildings = new();   // Для выдачи наружу реактивного списка
+    private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();  // Кэшируем созданные ViewModel
+    private readonly Dictionary<string, BuildingSettings> _buildingsSettingsMap = new();   // Кэшируем список настроек для всех типов строений
 
     public IObservableCollection<BuildingViewModel> AllBuildings => _allBuildings;  // Для выдачи наружу реактивного списка
 
-    public BuildingsService(IObservableCollection<BuildingEntityProxy> buildings, ICommandProcessor cmd)
+    public BuildingsService(
+        IObservableCollection<BuildingEntityProxy> buildings,
+        BuildingsSettings buildingsSettings,
+        ICommandProcessor cmd)
     {
         _cmd = cmd;
+
+        // Формируем список настроек для всех типов строений
+        foreach (var buildingSettings in buildingsSettings.AllBuildings)
+        {
+            _buildingsSettingsMap[buildingSettings.TypeId] = buildingSettings;
+        }
 
         // Пробегаемся по состояниям и для каждого состояние создаем ViewModel
         foreach (var building in buildings)
@@ -56,16 +66,17 @@ public class BuildingsService   // Посылает команды в обработчик команд
 
     private void CreateBuildingViewModel(BuildingEntityProxy buildingEntity)
     {
-        var buildingViewModel = new BuildingViewModel(buildingEntity, this);
+        var buildingSettings = _buildingsSettingsMap[buildingEntity.TypeId];
+        var buildingViewModel = new BuildingViewModel(buildingEntity, buildingSettings, this);
         _allBuildings.Add(buildingViewModel);
-        _buildingMap[buildingEntity.Id] = buildingViewModel;
+        _buildingsMap[buildingEntity.Id] = buildingViewModel;
     }
 
     private void RemoveBuildingViewModel(BuildingEntityProxy buildingEntity)
     {
-        if (_buildingMap.TryGetValue(buildingEntity.Id, out var buildingViewModel))
+        if (_buildingsMap.TryGetValue(buildingEntity.Id, out var buildingViewModel))
         {
-            _buildingMap.Remove(buildingEntity.Id);
+            _buildingsMap.Remove(buildingEntity.Id);
             _allBuildings.Remove(buildingViewModel);
         }
     }

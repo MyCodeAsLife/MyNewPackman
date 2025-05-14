@@ -51,9 +51,9 @@ public class GameplayEntryPoint : MonoBehaviour
         });     //+++++++++++++++++++++
 
         var buildingsService = _sceneContainer.Resolve<BuildingsService>();
-        buildingsService.PlaceBuilding("TestBuilding_1", new Vector3Int(1, 0, 0));
-        buildingsService.PlaceBuilding("TestBuilding_2", new Vector3Int(1, 2, 0));
-        buildingsService.PlaceBuilding("TestBuilding_3", new Vector3Int(-1, 1, 0));
+        buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
+        buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
+        buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
     }
 
     private void CreateViewRootBinder(WorldGameplayRootViewModel worldGameplayRootViewModel)

@@ -13,8 +13,6 @@ public class WorldGameplayRootBinder : MonoBehaviour
     // И они при своем удалении будут пытатся обрашатся к данному объекту на удаление View
     private readonly CompositeDisposable _disposables = new();
 
-    [SerializeField] private BuildingBinder _prefabBuilding;
-
     private void OnDestroy()
     {
         _disposables.Dispose();
@@ -22,8 +20,6 @@ public class WorldGameplayRootBinder : MonoBehaviour
 
     public void Bind(WorldGameplayRootViewModel rootViewModel)
     {
-        _prefabBuilding = Resources.Load<BuildingBinder>("Prefabs/ForTests/BuildingDummy");
-
         foreach (var viewModel in rootViewModel.AllBuildings)
         {
             CreateBuilding(viewModel);
@@ -43,7 +39,12 @@ public class WorldGameplayRootBinder : MonoBehaviour
 
     private void CreateBuilding(BuildingViewModel buildingViewModel)
     {
-        var createdBuilding = Instantiate(_prefabBuilding);     // Создаем View объекта
+        int buildingLevel = Random.Range(1, 4);
+        string buildingTypeId = buildingViewModel.TypeId;
+        string prefabBuildingPath = $"Prefabs/ForTests/Building_{buildingTypeId}_{buildingLevel}";
+        var prefabBuilding = Resources.Load<BuildingBinder>(prefabBuildingPath);
+
+        var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта
         createdBuilding.Bind(buildingViewModel);                // Объеденяем его с ViewModel
 
         // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять

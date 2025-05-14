@@ -98,8 +98,8 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         {
             Buildings = new List<BuildingEntity>
             {
-                new(){TypeId = "Default one"},
-                new(){TypeId = "Default two"},
+                //new(){TypeId = "Default one"},
+                //new(){TypeId = "Default two"},
             }
         };
 
