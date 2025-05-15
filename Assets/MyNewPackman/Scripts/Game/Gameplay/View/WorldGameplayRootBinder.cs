@@ -39,7 +39,7 @@ public class WorldGameplayRootBinder : MonoBehaviour
 
     private void CreateBuilding(BuildingViewModel buildingViewModel)
     {
-        int buildingLevel = Random.Range(1, 4);
+        int buildingLevel = buildingViewModel.Level.CurrentValue;
         string buildingTypeId = buildingViewModel.TypeId;
         string prefabBuildingPath = $"Prefabs/ForTests/Building_{buildingTypeId}_{buildingLevel}";
         var prefabBuilding = Resources.Load<BuildingBinder>(prefabBuildingPath);

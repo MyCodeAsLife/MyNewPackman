@@ -27,6 +27,7 @@ public class BuildingViewModel
     }
 
     public ReadOnlyReactiveProperty<Vector3Int> Position => _buildingEntity.Position;
+    public ReadOnlyReactiveProperty<int> Level => _buildingEntity.Level;
     public int BuildingEntityId => _buildingEntity.Id;
     public string TypeId => _buildingEntity.TypeId;
 

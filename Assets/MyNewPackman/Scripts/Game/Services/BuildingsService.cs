@@ -8,7 +8,7 @@ using UnityEngine;
 public class BuildingsService   // Посылает команды в обработчик команд
 {
     private readonly ICommandProcessor _cmd;
-    private readonly ObservableList<BuildingViewModel> _allBuildings = new();   // Для выдачи наружу реактивного списка
+    private readonly ObservableList<BuildingViewModel> _allBuildings = new();
     private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();  // Кэшируем созданные ViewModel
     private readonly Dictionary<string, BuildingSettings> _buildingsSettingsMap = new();   // Кэшируем список настроек для всех типов строений
 

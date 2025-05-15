@@ -5,5 +5,11 @@ using System.Collections.Generic;
 public class GameState
 {
     public int GlobalEntityId;              // —четчик дл€ ID создаваемых сущностей.
-    public List<BuildingEntity> Buildings   /*= new()*/;
+    public int CurrentMapId;
+    public List<MapState> Maps;
+
+    public int CreateEntityId()
+    {
+        return GlobalEntityId++;
+    }
 }

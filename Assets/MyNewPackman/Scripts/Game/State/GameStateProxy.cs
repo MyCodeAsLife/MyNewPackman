@@ -7,29 +7,33 @@ public class GameStateProxy
 {
     private readonly GameState _gameState;
 
+    public ReactiveProperty<int> CurrentMapId = new();
+
     public GameStateProxy(GameState gameState)
     {
         _gameState = gameState;
-        _gameState.Buildings.ForEach(buildingEntity => Buildings.Add(new BuildingEntityProxy(buildingEntity)));
+        _gameState.Maps.ForEach(mapState => Maps.Add(new Map(mapState)));
 
         // При добавлении элемента в Buildings текущего класса, добавится элемент в Buildings класса GameState
-        Buildings.ObserveAdd().Subscribe(collectionAddEvent =>
+        Maps.ObserveAdd().Subscribe(collectionAddEvent =>
         {
-            var addedBuildingEntityProxy = collectionAddEvent.Value;
-            _gameState.Buildings.Add(addedBuildingEntityProxy.BuildingEntity);
+            var addedMap = collectionAddEvent.Value;
+            _gameState.Maps.Add(addedMap.Origin);
         });
 
         // При удалении элемента из Buildings текущего класса, также удалится элемент из Buildings класса GameState
-        Buildings.ObserveRemove().Subscribe(collectionRemovedEvent =>
+        Maps.ObserveRemove().Subscribe(collectionRemovedEvent =>
         {
-            var removedBuildingEntityProxy = collectionRemovedEvent.Value;
-            var removedBuildingEntity = _gameState.Buildings.FirstOrDefault(buildingEntity =>
-                                                buildingEntity.Id == removedBuildingEntityProxy.Id);
-            _gameState.Buildings.Remove(removedBuildingEntity);
+            var removedMap = collectionRemovedEvent.Value;
+            var removedMapState = _gameState.Maps.FirstOrDefault(mapState =>
+                                                mapState.Id == removedMap.Id);
+            _gameState.Maps.Remove(removedMapState);
         });
+
+        CurrentMapId.Subscribe(newValue => { gameState.CurrentMapId = newValue; });
     }
 
-    public ObservableList<BuildingEntityProxy> Buildings { get; } = new();
+    public ObservableList<Map> Maps { get; } = new();
 
-    public int GetEntityId() => _gameState.GlobalEntityId++;
+    public int CreateEntityId() => _gameState.CreateEntityId();
 }

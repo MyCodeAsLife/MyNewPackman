@@ -1,4 +1,7 @@
-﻿public class CmdPlaceBuildingHandler : ICommandHandler<CmdPlaceBuilding>
+﻿using System.Linq;
+using UnityEngine;
+
+public class CmdPlaceBuildingHandler : ICommandHandler<CmdPlaceBuilding>
 {
     private readonly GameStateProxy _gameState;
 
@@ -9,7 +12,14 @@
 
     public bool Handle(CmdPlaceBuilding command)
     {
-        var entityId = _gameState.GetEntityId();
+        var currentMap = _gameState.Maps.FirstOrDefault(m => m.Id == _gameState.CurrentMapId.Value);
+        if (currentMap == null)
+        {
+            Debug.Log($"Couldn't find MapState for id: {_gameState.CurrentMapId.Value}");
+            return false;
+        }
+
+        var entityId = _gameState.CreateEntityId();
         var newBuildingEntity = new BuildingEntity
         {
             Id = entityId,
@@ -18,7 +28,7 @@
         };
 
         var newBuildingEntityProxy = new BuildingEntityProxy(newBuildingEntity);
-        _gameState.Buildings.Add(newBuildingEntityProxy);
+        currentMap.Buildings.Add(newBuildingEntityProxy);
 
         return true;
     }

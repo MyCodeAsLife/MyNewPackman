@@ -36,7 +36,9 @@ public class MainMenuEntryPoint : MonoBehaviour
     private MainMenuExitParams CreateExitParams()
     {
         // Создаем\конфигурируем параметры выхода с текущей сцены
-        var gameplayEnterParams = new GameplayEnterParams("large.save", 228);     // Magic
+        string saveFileName = "large.save";
+        int levelNumber = 1;                    // Потому как в гонфигах сейчас есть только 0 уровень
+        var gameplayEnterParams = new GameplayEnterParams(saveFileName, levelNumber);
         var exitParams = new MainMenuExitParams(gameplayEnterParams);
         return exitParams;
     }

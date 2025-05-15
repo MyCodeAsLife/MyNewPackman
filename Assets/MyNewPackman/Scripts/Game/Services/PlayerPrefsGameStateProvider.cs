@@ -96,11 +96,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         // Делаем фейк
         _gameStateOrigin = new GameState
         {
-            Buildings = new List<BuildingEntity>
-            {
-                //new(){TypeId = "Default one"},
-                //new(){TypeId = "Default two"},
-            }
+            Maps = new List<MapState>(),
         };
 
         return new GameStateProxy(_gameStateOrigin);

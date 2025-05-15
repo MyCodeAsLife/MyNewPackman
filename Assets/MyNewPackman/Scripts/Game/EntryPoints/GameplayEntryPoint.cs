@@ -23,7 +23,7 @@ public class GameplayEntryPoint : MonoBehaviour
         CreateViewRootBinder(gameplayViewModelContainer.Resolve<WorldGameplayRootViewModel>());
 
         // For test
-        TestCommandProcessor();
+        //TestCommandProcessor();
         gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
 
         //// Заглушка
@@ -38,22 +38,22 @@ public class GameplayEntryPoint : MonoBehaviour
 
     private void TestCommandProcessor()
     {
-        var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
-        gameStateProvider.GameState.Buildings.ObserveAdd().Subscribe(e =>
-        {
-            var building = e.Value;
-            Debug.Log("Building placed. Type id: " +
-                building.TypeId +
-                ", ID: " + building.Id +
-                ", Position: " +
-                building.Position.Value
-                );
-        });     //+++++++++++++++++++++
+        //var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
+        //gameStateProvider.GameState.Maps.ObserveAdd().Subscribe(e =>
+        //{
+        //    var building = e.Value;
+        //    Debug.Log("Building placed. Type id: " +
+        //        building.TypeId +
+        //        ", ID: " + building.Id +
+        //        ", Position: " +
+        //        building.Position.Value
+        //        );
+        //});     //+++++++++++++++++++++
 
-        var buildingsService = _sceneContainer.Resolve<BuildingsService>();
-        buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
-        buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
-        buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
+        //var buildingsService = _sceneContainer.Resolve<BuildingsService>();
+        //buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
+        //buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
+        //buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
     }
 
     private void CreateViewRootBinder(WorldGameplayRootViewModel worldGameplayRootViewModel)

@@ -51,7 +51,7 @@ public class AppEntryPoint
 
         if (sceneName == GameConstants.Gameplay)
         {
-            var defaultScene = new GameplayEnterParams("ddd.sv", 1);
+            var defaultScene = new GameplayEnterParams("ddd.sv", 1);     // Тут необходимо реализовать загрузку карты\настроек по умолчанию
             Coroutines.StartRoutine(LoadAndStartGameplay(defaultScene));
             return;
         }

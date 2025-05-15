@@ -1,11 +1,11 @@
 public class GameplayEnterParams : SceneEnterParams
 {
-    public GameplayEnterParams(string saveFileName, int levelNumber) : base(GameConstants.Gameplay)
+    public GameplayEnterParams(string saveFileName, int mapId) : base(GameConstants.Gameplay)
     {
         SaveFileName = saveFileName;
-        LevelNumber = levelNumber;
+        MapId = mapId;
     }
 
     public string SaveFileName { get; } // Для загрузки "уровня"
-    public int LevelNumber { get; }     // Номер уровня для создания из "префаба"
+    public int MapId { get; }     // Номер уровня для создания из "префаба"
 }

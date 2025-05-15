@@ -4,4 +4,5 @@
 public class GameSettings : ScriptableObject
 {
     public BuildingsSettings BuildingsSettings;
+    public MapsSettings MapsSettings;
 }
