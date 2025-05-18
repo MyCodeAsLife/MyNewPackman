@@ -13,7 +13,7 @@ public class SettingsProvider : ISettingsProvider
     public ApplicationSettings ApplicationSettings { get; }
     public GameSettings GameSettings => _gameSettings;
 
-    public Task<GameSettings> LoadGameSettingsAsync() // Асинхронная загрузка настроек игрового уровня
+    public Task<GameSettings> LoadBasicGameSettingsAsync() // Асинхронная загрузка настроек игрового уровня
     {
         if (_gameSettings == null)
             _gameSettings = Resources.Load<GameSettings>("Settings/GameSettings");

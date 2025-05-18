@@ -44,7 +44,7 @@ public class AppEntryPoint
     // Запрос на загрузку первой сцены, при запуске приложения
     private async void RunApplication()
     {
-        await _projectContainer.Resolve<ISettingsProvider>().LoadGameSettingsAsync();   // Нужно ставить в блок загрузки уровня?
+        await _projectContainer.Resolve<ISettingsProvider>().LoadBasicGameSettingsAsync();   // Нужно ставить в блок загрузки уровня?
 
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
