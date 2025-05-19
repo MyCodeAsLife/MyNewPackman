@@ -20,7 +20,7 @@ public class CmdPlaceBuildingHandler : ICommandHandler<CmdPlaceBuilding>
         }
 
         var entityId = _gameState.CreateEntityId();
-        var newBuildingEntity = new BuildingEntity
+        var newBuildingEntity = new BuildingEntityData
         {
             Id = entityId,
             TypeId = command.BuildingTypeId,

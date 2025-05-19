@@ -11,8 +11,8 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
     public GameStateProxy GameState { get; private set; }
     public GameSettingsStateProxy SettingsState { get; private set; }
 
-    private GameState _gameStateOrigin { get; set; }
-    private GameSettingsState _settingsStateOrigin { get; set; }
+    private GameStateData _gameStateOrigin { get; set; }
+    private GameSettingsStateData _settingsStateOrigin { get; set; }
 
 
     public Observable<GameStateProxy> LoadGameState()   // Похожа на LoadSettingsState
@@ -28,7 +28,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         {
             // Загружаем
             var json = PlayerPrefs.GetString(GAME_STATE_KEY);
-            _gameStateOrigin = JsonUtility.FromJson<GameState>(json);
+            _gameStateOrigin = JsonUtility.FromJson<GameStateData>(json);
             GameState = new GameStateProxy(_gameStateOrigin);
 
             Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
@@ -50,7 +50,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         {
             // Загружаем
             var json = PlayerPrefs.GetString(SETTINGS_STATE_KEY);
-            _settingsStateOrigin = JsonUtility.FromJson<GameSettingsState>(json);
+            _settingsStateOrigin = JsonUtility.FromJson<GameSettingsStateData>(json);
             SettingsState = new GameSettingsStateProxy(_settingsStateOrigin);
 
             //Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
@@ -94,9 +94,9 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
     private GameStateProxy CreateGameStateFromSettings()    // Похожа на CreateGameSettingsStateFromSettings
     {
         // Делаем фейк
-        _gameStateOrigin = new GameState
+        _gameStateOrigin = new GameStateData
         {
-            Maps = new List<MapState>(),
+            Maps = new List<MapStateData>(),
         };
 
         return new GameStateProxy(_gameStateOrigin);
@@ -105,7 +105,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
     private GameSettingsStateProxy CreateGameSettingsStateFromSettings()    // Похожа на CreateGameStateFromSettings
     {
         // Делаем фейк
-        _settingsStateOrigin = new GameSettingsState
+        _settingsStateOrigin = new GameSettingsStateData
         {
             MusicVolume = 22,
             SFXVolume = 33,

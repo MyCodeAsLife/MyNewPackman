@@ -6,6 +6,6 @@ public class GameplayEnterParams : SceneEnterParams
         MapId = mapId;
     }
 
-    public string SaveFileName { get; } // Для загрузки "уровня"
+    public string SaveFileName { get; } // Для загрузки "уровня" из сохранения
     public int MapId { get; }     // Номер уровня для создания из "префаба"
 }

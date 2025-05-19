@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 [Serializable]
-public class MapState
+public class MapStateData
 {
     public int GlobalEntityId;              // Счетчик для ID создаваемых сущностей.
     public int Id;
-    public List<BuildingEntity> Buildings   /*= new()*/;
+    public List<BuildingEntityData> Buildings;
 }

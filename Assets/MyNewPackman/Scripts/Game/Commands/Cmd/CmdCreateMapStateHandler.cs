@@ -24,13 +24,13 @@ public class CmdCreateMapStateHandler : ICommandHandler<CmdCreateMapState>
         }
 
         var newMapSettings = _gameSettings.MapsSettings.Maps.First(m => m.MapId == command.MapId);  // Получаем настройки карты
-        var newMapInitialStateSettings = newMapSettings.InitialStateSettings;   // Получаем стартовые настройки для данной карты
+        var newMapInitialStateSettings = newMapSettings.InitialStateSettings;   // Получаем стартовые настройки окружения данной карты
 
-        var initialBuildings = new List<BuildingEntity>();
+        var initialBuildings = new List<BuildingEntityData>();
 
         foreach (var buildingSettings in newMapInitialStateSettings.Buildings)
         {
-            var initialBuilding = new BuildingEntity
+            var initialBuilding = new BuildingEntityData
             {
                 Id = _gameState.CreateEntityId(),
                 TypeId = buildingSettings.TypeId,
@@ -41,7 +41,7 @@ public class CmdCreateMapStateHandler : ICommandHandler<CmdCreateMapState>
             initialBuildings.Add(initialBuilding);
         }
 
-        var newMapState = new MapState
+        var newMapState = new MapStateData
         {
             Id = command.MapId,
             Buildings = initialBuildings,

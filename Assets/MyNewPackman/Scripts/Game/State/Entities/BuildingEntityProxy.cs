@@ -2,9 +2,9 @@ using R3;
 using UnityEngine;
 
 // Паттерн Proxy над BuildingEntity
-public class BuildingEntityProxy
+public class BuildingEntityProxy    // Преименовать в BuildingEntity
 {
-    public BuildingEntityProxy(BuildingEntity buildingEntity)
+    public BuildingEntityProxy(BuildingEntityData buildingEntity)
     {
         BuildingEntity = buildingEntity;
         Id = buildingEntity.Id;
@@ -16,7 +16,7 @@ public class BuildingEntityProxy
         Position.Skip(1).Subscribe(value => buildingEntity.Position = value);   // Подписка на изменение оригинала, при изменении Proxy
     }
 
-    public BuildingEntity BuildingEntity { get; }
+    public BuildingEntityData BuildingEntity { get; }
     public int Id { get; }              // Нельзя изменить
     public string TypeId { get; }       // Нельзя изменить
     public ReactiveProperty<int> Level { get; }             // Можно изменить через Level.Value

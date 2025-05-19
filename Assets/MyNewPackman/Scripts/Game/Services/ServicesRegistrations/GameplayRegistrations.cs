@@ -16,7 +16,8 @@ public static class GameplayRegistrations
         // Регистрация обработчиков команд
         cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameStateProvider.GameState));                  // Команда создания\размещения строения
         cmd.RegisterHandler(new CmdCreateMapStateHandler(gameStateProvider.GameState, gameSettings));   // Комманда создания карты
-
+        cmd.RegisterHandler(new CmdResourcesAddHandler(gameStateProvider.GameState));                   // Создание\добавление ресурса
+        cmd.RegisterHandler(new CmdResourcesSpendHandler(gameStateProvider.GameState));                 // Трата ресурса
 
         // На данный момент мы знаем, что мы пытаемся загрузить карту. Но не знаем, есть ли ее состояние вообще.
         // Создание карты - это модель, так что работать с сней нужно через команды, поэтому нужен обработчик команд

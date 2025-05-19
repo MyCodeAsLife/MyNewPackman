@@ -33,9 +33,9 @@ public class MainMenuEntryPoint : MonoBehaviour
         return exitToGameplaySceneSignal; // Возвращаем преобразованный сигнал
     }
 
-    private MainMenuExitParams CreateExitParams()
+    private MainMenuExitParams CreateExitParams()   // Создаем\конфигурируем параметры выхода с текущей сцены
     {
-        // Создаем\конфигурируем параметры выхода с текущей сцены
+        // Имитация выбора уровня для загрузки\создания
         string saveFileName = "large.save";
         int levelNumber = 1;                    // Потому как в гонфигах сейчас есть только 0 уровень
         var gameplayEnterParams = new GameplayEnterParams(saveFileName, levelNumber);

@@ -7,7 +7,7 @@ public abstract class SceneEnterParams
 
     public string SceneName { get; }    // Зачем?
 
-    public T As<T>() where T : SceneEnterParams     // Ограничиваем каст дочерних классов.
+    public T As<T>() where T : SceneEnterParams     // Для простоты каста в дочерний класс
     {
         return (T)this;
     }

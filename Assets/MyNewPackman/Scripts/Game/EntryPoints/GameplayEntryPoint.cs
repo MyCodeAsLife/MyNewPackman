@@ -1,5 +1,4 @@
-﻿using ObservableCollections;
-using R3;
+﻿using R3;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -36,25 +35,25 @@ public class GameplayEntryPoint : MonoBehaviour
         return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
     }
 
-    private void TestCommandProcessor()
-    {
-        //var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
-        //gameStateProvider.GameState.Maps.ObserveAdd().Subscribe(e =>
-        //{
-        //    var building = e.Value;
-        //    Debug.Log("Building placed. Type id: " +
-        //        building.TypeId +
-        //        ", ID: " + building.Id +
-        //        ", Position: " +
-        //        building.Position.Value
-        //        );
-        //});     //+++++++++++++++++++++
+    //private void TestCommandProcessor()
+    //{
+    //    var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
+    //    gameStateProvider.GameState.Maps.ObserveAdd().Subscribe(e =>
+    //    {
+    //        var building = e.Value;
+    //        Debug.Log("Building placed. Type id: " +
+    //            building.TypeId +
+    //            ", ID: " + building.Id +
+    //            ", Position: " +
+    //            building.Position.Value
+    //            );
+    //    });     //+++++++++++++++++++++
 
-        //var buildingsService = _sceneContainer.Resolve<BuildingsService>();
-        //buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
-        //buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
-        //buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
-    }
+    //    var buildingsService = _sceneContainer.Resolve<BuildingsService>();
+    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
+    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
+    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
+    //}
 
     private void CreateViewRootBinder(WorldGameplayRootViewModel worldGameplayRootViewModel)
     {

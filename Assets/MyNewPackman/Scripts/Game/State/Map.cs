@@ -2,9 +2,9 @@
 using R3;
 using System.Linq;
 
-public class Map
+public class Map    // Переименовать в MapState
 {
-    public Map(MapState mapState)
+    public Map(MapStateData mapState)
     {
         Origin = mapState;
         mapState.Buildings.ForEach(buildingEntity => Buildings.Add(new BuildingEntityProxy(buildingEntity)));
@@ -27,6 +27,6 @@ public class Map
     }
 
     public int Id => Origin.Id;
-    public MapState Origin { get; }
+    public MapStateData Origin { get; }
     public ObservableList<BuildingEntityProxy> Buildings { get; } = new();
 }

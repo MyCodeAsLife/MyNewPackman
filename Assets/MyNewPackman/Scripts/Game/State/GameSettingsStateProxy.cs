@@ -1,8 +1,8 @@
 ﻿using R3;
 
-public class GameSettingsStateProxy
+public class GameSettingsStateProxy // Переименовать в GameSettingsState
 {
-    public GameSettingsStateProxy(GameSettingsState gameSettingsState)
+    public GameSettingsStateProxy(GameSettingsStateData gameSettingsState)
     {
         MusicVolume = new ReactiveProperty<int>(gameSettingsState.MusicVolume);
         SFXVolume = new ReactiveProperty<int>(gameSettingsState.SFXVolume);

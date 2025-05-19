@@ -43,8 +43,8 @@ public class WorldGameplayRootBinder : MonoBehaviour
         string buildingTypeId = buildingViewModel.TypeId;
         string prefabBuildingPath = $"Prefabs/ForTests/Building_{buildingTypeId}_{buildingLevel}";
         var prefabBuilding = Resources.Load<BuildingBinder>(prefabBuildingPath);
-
         var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта
+
         createdBuilding.Bind(buildingViewModel);                // Объеденяем его с ViewModel
 
         // По хорошему, создаваемые View нужно кэшировать, чтобы проще было их удалять

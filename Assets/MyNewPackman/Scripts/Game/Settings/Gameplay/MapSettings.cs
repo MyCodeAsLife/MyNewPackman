@@ -4,5 +4,5 @@
 public class MapSettings : ScriptableObject
 {
     public int MapId;
-    public MapInitialStateSettings InitialStateSettings;
+    public MapInitialStateSettingsData InitialStateSettings;
 }

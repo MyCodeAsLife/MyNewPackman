@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public class Entity
+public class EntityData
 {
     public int Id;
 }

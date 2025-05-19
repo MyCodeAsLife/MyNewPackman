@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public class GameSettingsState
+public class GameSettingsStateData
 {
     public int MusicVolume;
     public int SFXVolume;
