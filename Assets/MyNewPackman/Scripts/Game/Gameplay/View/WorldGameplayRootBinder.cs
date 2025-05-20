@@ -13,6 +13,15 @@ public class WorldGameplayRootBinder : MonoBehaviour
     // И они при своем удалении будут пытатся обрашатся к данному объекту на удаление View
     private readonly CompositeDisposable _disposables = new();
 
+    private WorldGameplayRootViewModel _viewModel;
+
+    // For Tests
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            _viewModel.HandleTestInput();
+    }
+
     private void OnDestroy()
     {
         _disposables.Dispose();
@@ -20,6 +29,8 @@ public class WorldGameplayRootBinder : MonoBehaviour
 
     public void Bind(WorldGameplayRootViewModel rootViewModel)
     {
+        _viewModel = rootViewModel; // For Tests
+
         foreach (var viewModel in rootViewModel.AllBuildings)
         {
             CreateBuilding(viewModel);

@@ -20,9 +20,9 @@
     public const string WallTilesFolderPath = "WallTiles/";
     public const string NodeRuleTileFolderPath = "NodeRuleTile/";
     public const string PelletRuleTilesFolderPath = "PelletRuleTiles/";
-    public const string UIRootViewFullPath = "Prefabs/UI/UIRootView";
-    public const string UIMainMenuFullPath = "Prefabs/UI/UIMainMenu";
-    public const string UIGameplayFullPath = "Prefabs/UI/UIGameplay";
+    public const string UIRootViewFullPath = "Prefabs/UI/RootViewUI";
+    public const string UIMainMenuFullPath = "Prefabs/UI/MainMenuUI";
+    public const string UIGameplayFullPath = "Prefabs/UI/GameplayUI";
 
     // Number of tiles along the specified path
     public const int NumberOfWallTiles = 38;

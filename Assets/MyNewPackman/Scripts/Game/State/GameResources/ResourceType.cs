@@ -1,5 +1,5 @@
 ﻿public enum ResourceType
 {
     SoftCurrency,
-    HardCurrebcy,
+    HardCurrency,
 }

@@ -97,6 +97,11 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         _gameStateOrigin = new GameStateData
         {
             Maps = new List<MapStateData>(),
+            Resources = new List<ResourceData>()
+            {
+                new() {ResourceType = ResourceType.SoftCurrency, Amount = 0},
+                new() {ResourceType = ResourceType.HardCurrency, Amount = 0},
+            }
         };
 
         return new GameStateProxy(_gameStateOrigin);

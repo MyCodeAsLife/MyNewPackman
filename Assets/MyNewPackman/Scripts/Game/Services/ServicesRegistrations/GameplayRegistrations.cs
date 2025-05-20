@@ -41,6 +41,12 @@ public static class GameplayRegistrations
         }
 
         // Регистрация фабрики создания сервиса строений(создание\перемещение\удаление)
-        container.RegisterFactory(_ => new BuildingsService(loadingMap.Buildings, gameSettings.BuildingsSettings, cmd)).AsSingle();
+        container.RegisterFactory(_ => new BuildingsService(
+                loadingMap.Buildings,
+                gameSettings.BuildingsSettings,
+                cmd))
+            .AsSingle();
+        // Регистрация фабрики создания сервиса по работе с ресурсами(создание, добавление, трата, подписка на изменение и т.д.)
+        container.RegisterFactory(_ => new ResourcesService(gameStateProvider.GameState.Resources, cmd)).AsSingle();
     }
 }
