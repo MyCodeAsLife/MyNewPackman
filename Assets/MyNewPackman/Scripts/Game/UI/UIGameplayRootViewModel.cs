@@ -1,4 +1,4 @@
-public class UIGameplayRootViewModel
+public class UIGameplayRootViewModel : UIRootViewModel
 {
     public UIGameplayRootViewModel()
     {
