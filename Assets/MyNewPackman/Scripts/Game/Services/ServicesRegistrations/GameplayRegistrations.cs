@@ -1,7 +1,8 @@
-// Регистрация в DI контейнер всех сервисов необходимых для сцены Gameplay
+using R3;
 using System;
 using System.Linq;
 
+// Регистрация в DI контейнер всех сервисов необходимых для сцены Gameplay
 public static class GameplayRegistrations
 {
     public static void Register(DIContainer container, GameplayEnterParams gameplayEnterParams)
@@ -10,6 +11,10 @@ public static class GameplayRegistrations
         // Получение настроек
         var gameSettings = container.Resolve<ISettingsProvider>().GameSettings;
         //var buildings = gameStateProvider.GameState.Maps;
+
+        // Регистрируем сигнал запрашивающий выход в MainMenu
+        container.RegisterInstance(GameConstants.ExitSceneRequestTag, new Subject<Unit>());
+
         // Создание и регистрация процессора\обработчика команд
         var cmd = new CommandProcessor(gameStateProvider);
         container.RegisterInstance<ICommandProcessor>(cmd);

@@ -1,4 +1,4 @@
-﻿public static class GameConstants
+﻿public static class GameConstants   // Разделить на GameConstants и AppConstants?
 {
     // General
     public const float Half = 0.5f;
@@ -57,4 +57,7 @@
 
     // UI and Camera
     public const float GameplayInformationalPamelHeight = 3f;
+
+    // Signal Tag
+    public const string ExitSceneRequestTag = nameof(ExitSceneRequestTag);
 }

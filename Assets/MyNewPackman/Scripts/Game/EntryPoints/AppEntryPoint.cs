@@ -112,6 +112,7 @@ public class AppEntryPoint
 
         var gameplayContainer = _cashedSceneContainer = new DIContainer(_projectContainer); // Создание чистого контейнера для сцены
         var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();   // Ищем точку входа на сцене
+        // Подписка на сигнал перехода на сцену MainMenu
         sceneEntryPoint.Run(sceneEnterParams, gameplayContainer).Subscribe(gameplayExitParams =>
         {
             // Делаем чтото с данными возвращенными из сцены gameplayExitParams

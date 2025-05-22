@@ -15,50 +15,27 @@ public class GameplayEntryPoint : MonoBehaviour
 
         // Регистрация всего необходимого для данной сцены
         GameplayRegistrations.Register(_sceneContainer, gameplayEnterParams);   // Регистрируем все сервисы необходимые для сцены
-        var gameplayViewModelContainer = new DIContainer(_sceneContainer);      // Создаем отдельный контейнер для ViewModel's
-        GameplayViewModelRegistartions.Register(gameplayViewModelContainer);    // Регистрируем все ViewModel's необходимые для сцены
+        var gameplayViewModelsContainer = new DIContainer(_sceneContainer);      // Создаем отдельный контейнер для ViewModel's
+        GameplayViewModelRegistartions.Register(gameplayViewModelsContainer);    // Регистрируем все ViewModel's необходимые для сцены
 
-        CreateUIRootBinder();
-        CreateViewRootBinder(gameplayViewModelContainer.Resolve<WorldGameplayRootViewModel>());
-
-        // For test
-        //TestCommandProcessor();
-        gameplayViewModelContainer.Resolve<UIGameplayRootViewModel>();
+        InitUI(gameplayViewModelsContainer);
+        InitWorld(gameplayViewModelsContainer);
 
         //// Заглушка
         //var dummy = gameObject.AddComponent<SceneEntryPoint>();
         //dummy.Run(_sceneContainer);
 
+        // Привязка сигнала к UI сцены (на кнопку выхода в MainMenu)
         var exitParams = CreateExitParams();
-        var exitSceneSignalSubj = CreateExitSignal();
-        var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitSceneSignalSubj, exitParams);
+        //_uiScene.Bind(_sceneContainer.Resolve<UIGameplayRootViewModel>());
+        var exitToMainMenuSceneSignal = ConfigurateExitSignal(exitParams);
         return exitToMainMenuSceneSignal; // Возвращаем преобразованный сигнал
     }
 
-    //private void TestCommandProcessor()
-    //{
-    //    var gameStateProvider = _sceneContainer.Resolve<IGameStateProvider>();
-    //    gameStateProvider.GameState.Maps.ObserveAdd().Subscribe(e =>
-    //    {
-    //        var building = e.Value;
-    //        Debug.Log("Building placed. Type id: " +
-    //            building.TypeId +
-    //            ", ID: " + building.Id +
-    //            ", Position: " +
-    //            building.Position.Value
-    //            );
-    //    });     //+++++++++++++++++++++
-
-    //    var buildingsService = _sceneContainer.Resolve<BuildingsService>();
-    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 0, 0));
-    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(1, 2, 0));
-    //    buildingsService.PlaceBuilding("dummy", new Vector3Int(-1, 1, 0));
-    //}
-
-    private void CreateViewRootBinder(WorldGameplayRootViewModel worldGameplayRootViewModel)
+    private void CreateViewRootBinder(DIContainer gameplayViewModelsContainer)
     {
         _worldGameplayRootBinder = transform.AddComponent<WorldGameplayRootBinder>();
-        _worldGameplayRootBinder.Bind(worldGameplayRootViewModel);
+        _worldGameplayRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
     }
 
     // Можно выделить в шаблон (в MainMenuEntryPoint похожая функция)
@@ -70,17 +47,9 @@ public class GameplayEntryPoint : MonoBehaviour
         uiRoot.AttachSceneUI(_uiScene.gameObject);
     }
 
-    private Subject<R3.Unit> CreateExitSignal()
+    private Observable<SceneExitParams> ConfigurateExitSignal(SceneExitParams exitParams)
     {
-        // Создание сигнала и привязка его к UI сцены (на кнопку выхода в MainMenu)
-        var exitSceneSignalSubj = new Subject<R3.Unit>();
-        _uiScene.Bind(exitSceneSignalSubj);
-        return exitSceneSignalSubj;
-    }
-
-    private Observable<SceneExitParams> ConfigurateExitSignal(Subject<R3.Unit> exitSceneSignalSubj,
-                                                                 SceneExitParams exitParams)
-    {
+        var exitSceneSignalSubj = _sceneContainer.Resolve<Subject<R3.Unit>>(GameConstants.ExitSceneRequestTag);
         // Преобразовываем сигнал выхода со сцены, чтобы он возвращал значение GameplayExitParams
         var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_ => exitParams);
         return exitToMainMenuSceneSignal;
@@ -92,5 +61,23 @@ public class GameplayEntryPoint : MonoBehaviour
         var mainMenuEnterParams = new MainMenuEnterParams("Some params");
         var exitParams = new SceneExitParams(mainMenuEnterParams);
         return exitParams;
+    }
+
+    private void InitWorld(DIContainer viewsContainer)
+    {
+        CreateViewRootBinder(viewsContainer);
+    }
+
+    private void InitUI(DIContainer viewsContainer)
+    {
+        CreateUIRootBinder();
+
+        // Запрашиваем рутовую вьюмодель и пихаем ее в биндер, который создали
+        var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+        _uiScene.Bind(uiSceneRootViewModel);
+
+        // For test Можно открывать окошки
+        var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+        uiManager.OpenScreenGameplay();
     }
 }
