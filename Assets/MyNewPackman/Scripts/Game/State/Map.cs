@@ -4,29 +4,29 @@ using System.Linq;
 
 public class Map    // Переименовать в MapState
 {
-    public Map(MapStateData mapState)
+    public Map(MapData mapState)
     {
         Origin = mapState;
-        mapState.Buildings.ForEach(buildingEntity => Buildings.Add(new BuildingEntityProxy(buildingEntity)));
+        mapState.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));
 
-        // При добавлении элемента в Buildings текущего класса, добавится элемент в Buildings класса GameState
-        Buildings.ObserveAdd().Subscribe(collectionAddEvent =>
+        // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса GameState
+        Entities.ObserveAdd().Subscribe(collectionAddEvent =>
         {
-            var addedBuildingEntityProxy = collectionAddEvent.Value;
-            mapState.Buildings.Add(addedBuildingEntityProxy.BuildingEntity);
+            var addedEntity = collectionAddEvent.Value;
+            mapState.Entities.Add(addedEntity.Origin);
         });
 
-        // При удалении элемента из Buildings текущего класса, также удалится элемент из Buildings класса GameState
-        Buildings.ObserveRemove().Subscribe(collectionRemovedEvent =>
+        // При удалении элемента из Entities текущего класса, также удалится элемент из Entities класса GameState
+        Entities.ObserveRemove().Subscribe(collectionRemovedEvent =>
         {
-            var removedBuildingEntityProxy = collectionRemovedEvent.Value;
-            var removedBuildingEntity = mapState.Buildings.FirstOrDefault(buildingEntity =>
-                                                buildingEntity.Id == removedBuildingEntityProxy.Id);
-            mapState.Buildings.Remove(removedBuildingEntity);
+            var removedEntity = collectionRemovedEvent.Value;
+            var removedEntityData = mapState.Entities.FirstOrDefault(entityData =>
+                                                entityData.UniqId == removedEntity.UniqueId);
+            mapState.Entities.Remove(removedEntityData);
         });
     }
 
     public int Id => Origin.Id;
-    public MapStateData Origin { get; }
-    public ObservableList<BuildingEntityProxy> Buildings { get; } = new();
+    public MapData Origin { get; }
+    public ObservableList<Entity> Entities { get; } = new();
 }

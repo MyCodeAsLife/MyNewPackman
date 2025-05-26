@@ -1,5 +1,4 @@
-﻿using ObservableCollections;
-using R3;
+﻿using R3;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,21 +30,21 @@ public class WorldGameplayRootBinder : MonoBehaviour
     {
         _viewModel = rootViewModel; // For Tests
 
-        foreach (var viewModel in rootViewModel.AllBuildings)
-        {
-            CreateBuilding(viewModel);
-        }
+        //foreach (var viewModel in rootViewModel.AllBuildings)
+        //{
+        //    CreateBuilding(viewModel);
+        //}
 
-        // Подписываем создание View, на появление новых ViewModel
-        _disposables.Add(rootViewModel.AllBuildings.ObserveAdd().Subscribe(e =>
-        {
-            CreateBuilding(e.Value);
-        }));
-        // Подписываем удаление View, на удаление ViewModel
-        _disposables.Add(rootViewModel.AllBuildings.ObserveRemove().Subscribe(e =>
-        {
-            DestroyBuilding(e.Value);
-        }));
+        //// Подписываем создание View, на появление новых ViewModel
+        //_disposables.Add(rootViewModel.AllBuildings.ObserveAdd().Subscribe(e =>
+        //{
+        //    CreateBuilding(e.Value);
+        //}));
+        //// Подписываем удаление View, на удаление ViewModel
+        //_disposables.Add(rootViewModel.AllBuildings.ObserveRemove().Subscribe(e =>
+        //{
+        //    DestroyBuilding(e.Value);
+        //}));
     }
 
     private void CreateBuilding(BuildingViewModel buildingViewModel)

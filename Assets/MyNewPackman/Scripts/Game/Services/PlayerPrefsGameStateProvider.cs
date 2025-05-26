@@ -96,7 +96,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         // Делаем фейк
         _gameStateOrigin = new GameStateData
         {
-            Maps = new List<MapStateData>(),
+            Maps = new List<MapData>(),
             Resources = new List<ResourceData>()
             {
                 new() {ResourceType = ResourceType.SoftCurrency, Amount = 0},

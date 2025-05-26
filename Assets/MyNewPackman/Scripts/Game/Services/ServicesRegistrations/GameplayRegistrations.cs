@@ -19,8 +19,8 @@ public static class GameplayRegistrations
         var cmd = new CommandProcessor(gameStateProvider);
         container.RegisterInstance<ICommandProcessor>(cmd);
         // Регистрация обработчиков команд
-        cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameStateProvider.GameState));                  // Команда создания\размещения строения
-        cmd.RegisterHandler(new CmdCreateMapStateHandler(gameStateProvider.GameState, gameSettings));   // Комманда создания карты
+        //cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameStateProvider.GameState));                  // Команда создания\размещения строения
+        cmd.RegisterHandler(new CmdCreateMapHandler(gameStateProvider.GameState, gameSettings));   // Комманда создания карты
         cmd.RegisterHandler(new CmdResourcesAddHandler(gameStateProvider.GameState));                   // Создание\добавление ресурса
         cmd.RegisterHandler(new CmdResourcesSpendHandler(gameStateProvider.GameState));                 // Трата ресурса
 
@@ -34,7 +34,7 @@ public static class GameplayRegistrations
         if (loadingMap == null)
         {
             // Если карта не нашлась, создаем её
-            var command = new CmdCreateMapState(loadingMapId); // Созданная карта положится в gameStateProvider.GameState.Maps
+            var command = new CmdCreateMap(loadingMapId); // Созданная карта положится в gameStateProvider.GameState.Maps
             bool success = cmd.Process(command);
 
             if (success == false)
@@ -45,12 +45,12 @@ public static class GameplayRegistrations
             loadingMap = gameStateProvider.GameState.Maps.First(m => m.Id == loadingMapId); // Вынимаем созданную карту
         }
 
-        // Регистрация фабрики создания сервиса строений(создание\перемещение\удаление)
-        container.RegisterFactory(_ => new BuildingsService(
-                loadingMap.Buildings,
-                gameSettings.BuildingsSettings,
-                cmd))
-            .AsSingle();
+        //// Регистрация фабрики создания сервиса строений(создание\перемещение\удаление)
+        //container.RegisterFactory(_ => new BuildingsService(
+        //        loadingMap.Buildings,
+        //        gameSettings.BuildingsSettings,
+        //        cmd))
+        //    .AsSingle();
         // Регистрация фабрики создания сервиса по работе с ресурсами(создание, добавление, трата, подписка на изменение и т.д.)
         container.RegisterFactory(_ => new ResourcesService(gameStateProvider.GameState.Resources, cmd)).AsSingle();
     }
