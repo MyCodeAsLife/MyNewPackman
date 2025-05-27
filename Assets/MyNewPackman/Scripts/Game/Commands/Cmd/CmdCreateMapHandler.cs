@@ -26,25 +26,28 @@ public class CmdCreateMapHandler : ICommandHandler<CmdCreateMap>
         var newMapSettings = _gameSettings.MapsSettings.Maps.First(m => m.MapId == command.MapId);  // Получаем настройки карты
         var newMapInitialStateSettings = newMapSettings.InitialStateSettings;   // Получаем стартовые настройки окружения данной карты
 
-        //var initialBuildings = new List<BuildingEntityData>();
+        var initialEntities = new List<EntityData>();
 
-        //foreach (var buildingSettings in newMapInitialStateSettings.Buildings)
-        //{
-        //    var initialBuilding = new BuildingEntityData
-        //    {
-        //        Id = _gameState.CreateEntityId(),
-        //        TypeId = buildingSettings.TypeId,
-        //        Position = buildingSettings.Position,
-        //        Level = buildingSettings.Level,
-        //    };
+        foreach (var buildingSettings in newMapInitialStateSettings.Buildings)
+        {
+            var initialBuilding = new BuildingEntityData
+            {
+                UniqId = _gameState.CreateEntityId(),
+                ConfigId = buildingSettings.TypeId,
+                Type = EntityType.Building,
+                Position = buildingSettings.Position,
+                Level = buildingSettings.Level,
+                IsAutoCollectionEnabled = false,
+                LastClickedTimeMS = 0,
+            };
 
-        //    initialBuildings.Add(initialBuilding);
-        //}
+            initialEntities.Add(initialBuilding);
+        }
 
         var newMapState = new MapData
         {
             Id = command.MapId,
-            //Buildings = initialBuildings,
+            Entities = initialEntities,
         };
 
         var newMap = new Map(newMapState);

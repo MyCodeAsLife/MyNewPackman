@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using Newtonsoft.Json;
+using R3;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,10 +18,18 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
 
     public Observable<GameStateProxy> LoadGameState()   // Похожа на LoadSettingsState
     {
+        // Для того чтобы Newtonsoft.JsonConvert нормально десериализовывал объекты с наследованием
+        JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+        };
+
         if (!PlayerPrefs.HasKey(GAME_STATE_KEY))
         {
             GameState = CreateGameStateFromSettings();  // Создаем дефолтное состояние
-            Debug.Log("GameState created from settings: " + JsonUtility.ToJson(_gameStateOrigin, true));    //++++++++++++++++++++++++++++++++
+            // В продакшене Formatting.Indented лучше не использовать, даполнительные затраты ресурсов
+            Debug.Log("GameState created from settings: " + JsonConvert.SerializeObject(_gameStateOrigin, Formatting.Indented));    //++++++++++++++++++++++++++++++++
 
             SaveGameState();    // Сохраняем дефолтное состояние
         }
@@ -28,7 +37,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         {
             // Загружаем
             var json = PlayerPrefs.GetString(GAME_STATE_KEY);
-            _gameStateOrigin = JsonUtility.FromJson<GameStateData>(json);
+            _gameStateOrigin = JsonConvert.DeserializeObject<GameStateData>(json);
             GameState = new GameStateProxy(_gameStateOrigin);
 
             Debug.Log("GameState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
@@ -50,7 +59,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
         {
             // Загружаем
             var json = PlayerPrefs.GetString(SETTINGS_STATE_KEY);
-            _settingsStateOrigin = JsonUtility.FromJson<GameSettingsStateData>(json);
+            _settingsStateOrigin = JsonConvert.DeserializeObject<GameSettingsStateData>(json);
             SettingsState = new GameSettingsStateProxy(_settingsStateOrigin);
 
             //Debug.Log("GameSettingsState loaded: " + json);                                  //++++++++++++++++++++++++++++++++
@@ -61,7 +70,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
 
     public Observable<bool> SaveGameState() // Похожа на SaveSettingsState
     {
-        var json = JsonUtility.ToJson(_gameStateOrigin, true);
+        var json = JsonConvert.SerializeObject(_gameStateOrigin, Formatting.Indented);
         PlayerPrefs.SetString(GAME_STATE_KEY, json);
 
         return Observable.Return(true);
@@ -69,7 +78,7 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
 
     public Observable<bool> SaveSettingsState() // Похожа на SaveGameState
     {
-        var json = JsonUtility.ToJson(_settingsStateOrigin, true);
+        var json = JsonConvert.SerializeObject(_settingsStateOrigin, Formatting.Indented);
         PlayerPrefs.SetString(SETTINGS_STATE_KEY, json);
 
         return Observable.Return(true);

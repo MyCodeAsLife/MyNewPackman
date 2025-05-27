@@ -6,5 +6,5 @@ public class BuildingInitialStateSettingsData
 {
     public string TypeId;
     public int Level;
-    public Vector3Int Position;
+    public Vector2Int Position;
 }
