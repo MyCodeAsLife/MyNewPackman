@@ -1,3 +1,4 @@
+using ObservableCollections;
 using R3;
 using System;
 using UnityEngine;
@@ -5,12 +6,12 @@ using UnityEngine;
 // Содержит список всех ViewModel, является посредником между WorldGameplayRootBinder и реактивным списком всех ViewModel
 public class WorldGameplayRootViewModel
 {
-    //public readonly IObservableCollection<BuildingViewModel> AllBuildings;
+    public readonly IObservableCollection<BuildingViewModel> AllBuildings;
     private readonly ResourcesService _resourcesService;
 
-    public WorldGameplayRootViewModel(/*BuildingsService buildingsService,*/ ResourcesService resourcesService)
+    public WorldGameplayRootViewModel(BuildingsService buildingsService, ResourcesService resourcesService)
     {
-        //AllBuildings = buildingsService.AllBuildings;   // Кэшируем доступ к реактивному списку ViewModel's
+        AllBuildings = buildingsService.AllBuildings;   // Кэшируем доступ к реактивному списку ViewModel's
 
         // For Tests
         _resourcesService = resourcesService;

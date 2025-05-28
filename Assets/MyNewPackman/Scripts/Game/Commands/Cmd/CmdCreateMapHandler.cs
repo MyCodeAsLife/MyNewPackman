@@ -28,20 +28,11 @@ public class CmdCreateMapHandler : ICommandHandler<CmdCreateMap>
 
         var initialEntities = new List<EntityData>();
 
-        foreach (var buildingSettings in newMapInitialStateSettings.Buildings)
+        foreach (var entitySettings in newMapInitialStateSettings.Entities)
         {
-            var initialBuilding = new BuildingEntityData
-            {
-                UniqId = _gameState.CreateEntityId(),
-                ConfigId = buildingSettings.TypeId,
-                Type = EntityType.Building,
-                Position = buildingSettings.Position,
-                Level = buildingSettings.Level,
-                IsAutoCollectionEnabled = false,
-                LastClickedTimeMS = 0,
-            };
-
-            initialEntities.Add(initialBuilding);
+            var initialEntityData = EntitiesDataFactory.CreateEntity(entitySettings);
+            initialEntityData.UniqId = _gameState.CreateEntityId();
+            initialEntities.Add(initialEntityData);
         }
 
         var newMapState = new MapData

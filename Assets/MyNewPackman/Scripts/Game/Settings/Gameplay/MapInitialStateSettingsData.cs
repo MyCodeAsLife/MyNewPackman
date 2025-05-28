@@ -4,5 +4,5 @@ using System.Collections.Generic;
 [Serializable]
 public class MapInitialStateSettingsData
 {
-    public List<BuildingInitialStateSettingsData> Buildings;
+    public List<EntityInitialStateSettingsData> Entities;
 }

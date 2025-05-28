@@ -45,12 +45,12 @@ public static class GameplayRegistrations
             loadingMap = gameStateProvider.GameState.Maps.First(m => m.Id == loadingMapId); // Вынимаем созданную карту
         }
 
-        //// Регистрация фабрики создания сервиса строений(создание\перемещение\удаление)
-        //container.RegisterFactory(_ => new BuildingsService(
-        //        loadingMap.Buildings,
-        //        gameSettings.BuildingsSettings,
-        //        cmd))
-        //    .AsSingle();
+        // Регистрация фабрики создания сервиса строений(создание\перемещение\удаление)
+        container.RegisterFactory(_ => new BuildingsService(
+                loadingMap.Entities,
+                gameSettings.EntitiesSettings,
+                cmd))
+            .AsSingle();
         // Регистрация фабрики создания сервиса по работе с ресурсами(создание, добавление, трата, подписка на изменение и т.д.)
         container.RegisterFactory(_ => new ResourcesService(gameStateProvider.GameState.Resources, cmd)).AsSingle();
     }

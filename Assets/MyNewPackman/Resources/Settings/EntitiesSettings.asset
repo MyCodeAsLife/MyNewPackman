@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c449d6b05a79ab4096b52a8178e2292, type: 3}
-  m_Name: BuildingsSettings
+  m_Script: {fileID: 11500000, guid: de58e78e0ade74a4b93363f794e33d26, type: 3}
+  m_Name: EntitiesSettings
   m_EditorClassIdentifier: 
-  AllBuildings:
+  <Buildings>k__BackingField:
   - {fileID: 11400000, guid: 65c5ee70eea1b7c409a0f30fc3d2437d, type: 2}

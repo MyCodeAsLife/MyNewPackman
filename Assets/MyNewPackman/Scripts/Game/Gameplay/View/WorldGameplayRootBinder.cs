@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using ObservableCollections;
+using R3;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,27 +31,27 @@ public class WorldGameplayRootBinder : MonoBehaviour
     {
         _viewModel = rootViewModel; // For Tests
 
-        //foreach (var viewModel in rootViewModel.AllBuildings)
-        //{
-        //    CreateBuilding(viewModel);
-        //}
+        foreach (var viewModel in rootViewModel.AllBuildings)
+        {
+            CreateBuilding(viewModel);
+        }
 
-        //// Подписываем создание View, на появление новых ViewModel
-        //_disposables.Add(rootViewModel.AllBuildings.ObserveAdd().Subscribe(e =>
-        //{
-        //    CreateBuilding(e.Value);
-        //}));
-        //// Подписываем удаление View, на удаление ViewModel
-        //_disposables.Add(rootViewModel.AllBuildings.ObserveRemove().Subscribe(e =>
-        //{
-        //    DestroyBuilding(e.Value);
-        //}));
+        // Подписываем создание View, на появление новых ViewModel
+        _disposables.Add(rootViewModel.AllBuildings.ObserveAdd().Subscribe(e =>
+        {
+            CreateBuilding(e.Value);
+        }));
+        // Подписываем удаление View, на удаление ViewModel
+        _disposables.Add(rootViewModel.AllBuildings.ObserveRemove().Subscribe(e =>
+        {
+            DestroyBuilding(e.Value);
+        }));
     }
 
     private void CreateBuilding(BuildingViewModel buildingViewModel)
     {
         int buildingLevel = buildingViewModel.Level.CurrentValue;
-        string buildingTypeId = buildingViewModel.TypeId;
+        string buildingTypeId = buildingViewModel.ConfigId;
         string prefabBuildingPath = $"Prefabs/ForTests/Building_{buildingTypeId}_{buildingLevel}";
         var prefabBuilding = Resources.Load<BuildingBinder>(prefabBuildingPath);
         var createdBuilding = Instantiate(prefabBuilding);     // Создаем View объекта

@@ -4,33 +4,35 @@ using UnityEngine;
 
 public class BuildingViewModel
 {
-    public readonly string TypeId;
+    public readonly string ConfigId;
     public readonly int BuildingEntityId;
-    //private readonly BuildingEntityProxy _buildingEntity;
+    private readonly BuildingEntity _buildingEntity;
     private readonly BuildingSettings _buildingSettings;    // Начальные настройки объекта
-    //private readonly BuildingsService _buildingsService;
+    private readonly BuildingsService _buildingsService;
     // Зачем это? если эти настройки можно бырать из _buildingSettings
     private readonly Dictionary<int, BuildingLevelSettings> _levelSettingsMap = new();
 
-    //public BuildingViewModel(
-    //    BuildingEntityProxy buildingEntity,
-    //    BuildingSettings buildingSettings,
-    //    BuildingsService buildingsService)
-    //{
-    //    TypeId = buildingEntity.TypeId;
-    //    BuildingEntityId = buildingEntity.Id;
-    //    Level = buildingEntity.Level;
-    //    _buildingEntity = buildingEntity;       // Правильно передовать через интерфейс "только для чтения"
-    //    _buildingSettings = buildingSettings;   // А также при изменении уровня строения, настройки уровня можно брать отсюда
-    //    _buildingsService = buildingsService;   // Необходим для отправки команд на изменениее, при взаимодействии с моделькой
+    public BuildingViewModel(
+        BuildingEntity buildingEntity,
+        BuildingSettings buildingSettings,
+        BuildingsService buildingsService)
+    {
+        ConfigId = buildingEntity.ConfigId;
+        BuildingEntityId = buildingEntity.UniqueId;
+        Level = buildingEntity.Level;
+        _buildingEntity = buildingEntity;       // Правильно передовать через интерфейс "только для чтения"
+        _buildingSettings = buildingSettings;   // А также при изменении уровня строения, настройки уровня можно брать отсюда
+        _buildingsService = buildingsService;   // Необходим для отправки команд на изменениее, при взаимодействии с моделькой
 
-        //    foreach (var buildingLevelSettings in _buildingSettings.LevelsSettings)
-        //    {
-        //        _levelSettingsMap[buildingLevelSettings.Level] = buildingLevelSettings;
-        //    }
-        //}
+        foreach (var buildingLevelSettings in _buildingSettings.Levels)
+        {
+            _levelSettingsMap[buildingLevelSettings.Level] = buildingLevelSettings;
+        }
 
-    public ReadOnlyReactiveProperty<Vector3Int> Position { get; }
+        Position = buildingEntity.Position;
+    }
+
+    public ReadOnlyReactiveProperty<Vector2Int> Position { get; }
     public ReadOnlyReactiveProperty<int> Level { get; }
 
     // К примеру при наведении на улучшение здание, UI запросит отсюда данные следующего уровня чтобы показать пользователю

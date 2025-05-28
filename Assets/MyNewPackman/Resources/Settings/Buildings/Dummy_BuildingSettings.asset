@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d86d3091212b72342ad44679f8087797, type: 3}
+  m_Script: {fileID: 11500000, guid: 598feac3975ac7543a7a7a882d850480, type: 3}
   m_Name: Dummy_BuildingSettings
   m_EditorClassIdentifier: 
-  TypeId: dummy
-  TitleLID: dummy_1
-  DescriptionLID: asasasasa
-  LevelsSettings:
+  <EntityType>k__BackingField: 1
+  <ConfigId>k__BackingField: dummy
+  <TitleLid>k__BackingField: 
+  <DescriptionLid>k__BackingField: 
+  <PrefabPath>k__BackingField: 
+  <PrefabName>k__BackingField: 
+  <Levels>k__BackingField:
   - {fileID: 11400000, guid: 2f8bf439d47c2c047a54cb90567ede1d, type: 2}
   - {fileID: 11400000, guid: 64e1ac1630180884f9f61528f483a0de, type: 2}
   - {fileID: 11400000, guid: 904589dfa147b1d44acc78c639b3664e, type: 2}

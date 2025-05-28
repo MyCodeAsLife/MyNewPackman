@@ -3,6 +3,6 @@
 [CreateAssetMenu(fileName = "GameSettings", menuName = "GameSettings/New Game Settings")]
 public class GameSettings : ScriptableObject
 {
-    public BuildingsSettings BuildingsSettings;
+    public EntitiesSettings EntitiesSettings;
     public MapsSettings MapsSettings;
 }

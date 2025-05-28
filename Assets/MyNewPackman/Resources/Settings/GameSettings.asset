@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a12a83c27470204794c11455422e236, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  BuildingsSettings: {fileID: 11400000, guid: fba60d22079ccf44c89549103f91ef9f, type: 2}
+  EntitiesSettings: {fileID: 11400000, guid: fba60d22079ccf44c89549103f91ef9f, type: 2}
   MapsSettings: {fileID: 11400000, guid: 1a3ed324a56674645b92a1dd3819353b, type: 2}
