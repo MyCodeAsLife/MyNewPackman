@@ -9,8 +9,8 @@ public abstract class Entity
     {
         Origin = data;
 
-        Position = new ReactiveProperty<Vector2Int>(data.Position);
-        Position.Subscribe(newPosition => { data.Position = newPosition; });
+        Position = new ReactiveProperty<Vector2Int>(data.Position);             // Реактивное свойство
+        Position.Subscribe(newPosition => { data.Position = newPosition; });    // При изменении реактивного свойства, также изменится data
     }
 
     public EntityData Origin { get; }

@@ -9,7 +9,7 @@ public class BuildingsService   // Посылает команды в обработчик команд
 {
     private readonly ICommandProcessor _cmd;
     private readonly ObservableList<BuildingViewModel> _allBuildings = new();
-    private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();  // Кэшируем созданные ViewModel
+    private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();  // Кэшируем созданные ViewModel, для быстрого доступа к последним в будущем
     private readonly Dictionary<string, BuildingSettings> _buildingsSettingsMap = new();   // Кэшируем список настроек для всех типов строений
 
     public IObservableCollection<BuildingViewModel> AllBuildings => _allBuildings;  // Для выдачи наружу реактивного списка
@@ -49,13 +49,13 @@ public class BuildingsService   // Посылает команды в обработчик команд
         });
     }
 
-    public bool PlaceBuilding(string buildingTypeId, Vector3Int position)
-    {
-        var command = new CmdPlaceBuilding(buildingTypeId, position);
-        var result = _cmd.Process(command);
+    //public bool PlaceBuilding(string buildingTypeId, Vector3Int position)
+    //{
+    //    var command = new CmdPlaceBuilding(buildingTypeId, position);
+    //    var result = _cmd.Process(command);
 
-        return result;
-    }
+    //    return result;
+    //}
 
     public bool MoveBuilding(int buildingEntityId, Vector3Int position)
     {

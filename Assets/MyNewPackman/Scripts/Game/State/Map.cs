@@ -9,7 +9,7 @@ public class Map    // Переименовать в MapState
         Origin = mapState;
         mapState.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));
 
-        // При добавлении элемента в Entities текущего класса, добавится элемент в Entities класса GameState
+        // При добавлении элемента в Entities текущего класса, добавится элемент в список EntityData класса MapData
         Entities.ObserveAdd().Subscribe(collectionAddEvent =>
         {
             var addedEntity = collectionAddEvent.Value;
