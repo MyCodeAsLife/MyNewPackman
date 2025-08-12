@@ -11,13 +11,13 @@ public class UIRootBinder : MonoBehaviour
 
     public void Bind(UIRootViewModel viewModel)
     {
-        // Подписываемся на изменение viewModel.OpenedScreen, тоесть когда пришел на запрос открытия нового окна
+        // Подписываемся на изменение viewModel.OpenedScreen, тоесть когда пришел запрос на открытие нового окна
         _subscriptions.Add(viewModel.OpenedScreen.Subscribe(newScreenViewModel =>
         {
             _windowsContainer.OpenScreen(newScreenViewModel);
         }));
 
-        // Создаем View для уже существующих/открытых Popups
+        // Кэшируем уже открытые вслывающие окна в общем списке для очисти при уничтожении данного объекта
         foreach (var popup in viewModel.OpenedPopups)
         {
             _subscriptions.Add(popup);
